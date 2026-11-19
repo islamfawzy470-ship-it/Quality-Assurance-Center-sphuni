@@ -1,0 +1,2970 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>يوم الجودة الجامعي | نظام الحضور واستحقاق الشهادات - جامعة سفنكس</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Arabic & Brand Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Cinzel:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- QR Scanner, QR Generator, Excel (SheetJS), and Confetti Celebration -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandNavy: '#03254C',
+            brandNavyLight: '#0A3B73',
+            brandMidnight: '#02152B',
+            brandCardDark: '#071E38',
+            brandOrange: '#F37021',
+            brandOrangeHover: '#D95D14',
+            brandCharcoal: '#1E242B',
+            brandBg: '#F4F7FA',
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            serifBrand: ['Cinzel', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      font-family: 'Cairo', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F4F7FA;
+      color: #03254C;
+      padding-bottom: 100px;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    html.dark body {
+      background-color: #02152B;
+      color: #F8FAFC;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(148, 163, 184, 0.15);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #F37021;
+      border-radius: 8px;
+    }
+
+    /* Splash Screen Animations */
+    @keyframes pulseScale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    @keyframes progressFill {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+    .splash-logo-anim {
+      animation: pulseScale 1.3s ease-in-out infinite;
+    }
+    .splash-bar-anim {
+      animation: progressFill 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* QR Laser Scanner Sweep */
+    @keyframes laserSweep {
+      0% { top: 10%; opacity: 0.35; }
+      50% { top: 88%; opacity: 1; }
+      100% { top: 10%; opacity: 0.35; }
+    }
+    .qr-laser-line {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #F37021, #ff9d5c, #F37021, transparent);
+      box-shadow: 0 0 12px 2px rgba(243, 112, 33, 0.85);
+      border-radius: 999px;
+      animation: laserSweep 2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    /* Scanner Video Styling */
+    #qr-reader {
+      border: none !important;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    #qr-reader video {
+      border-radius: 12px;
+      object-fit: cover;
+    }
+    #qr-reader__dashboard_section_csr button {
+      background-color: #03254C !important;
+      color: white !important;
+      border-radius: 8px !important;
+      padding: 6px 14px !important;
+      border: none !important;
+      font-family: 'Cairo', sans-serif !important;
+    }
+
+    /* Toast Slide Animation */
+    @keyframes slideInDown {
+      from {
+        transform: translate(-50%, -120%);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+    }
+    .toast-animate {
+      animation: slideInDown 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Shake Animation for Wrong PIN */
+    @keyframes shakeBox {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake-anim {
+      animation: shakeBox 0.35s ease;
+    }
+
+    /* Circular Progress Ring */
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    /* Print Styles for VIP Tickets A4 Grid */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-print-sheet, #printable-print-sheet * {
+        visibility: visible;
+      }
+      #printable-print-sheet {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 14px !important;
+        padding: 10px !important;
+        background: #FFFFFF !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-ticket-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 2px solid #03254C !important;
+        background: #FFFFFF !important;
+        color: #03254C !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ======================================================================= -->
+  <!-- ANIMATED STARTUP SPLASH SCREEN (1.3 Seconds)                            -->
+  <!-- ======================================================================= -->
+  <div id="splashScreen" class="fixed inset-0 z-50 bg-brandNavy flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
+    <div class="splash-logo-anim flex items-center justify-center gap-4 sm:gap-6 mb-5">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl p-2 shadow-2xl border-2 border-brandOrange flex items-center justify-center" id="splashLogoQac"></div>
+      <div class="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl p-2 shadow-2xl border-2 border-brandOrange flex items-center justify-center" id="splashLogoFoq"></div>
+    </div>
+
+    <h1 id="splashEventTitle" class="text-2xl sm:text-3xl font-black text-white tracking-wide mb-1">
+      يوم الجودة الجامعي
+    </h1>
+    <p class="text-sm sm:text-base font-bold text-brandOrange mb-6">
+      مركز ضمان الجودة &amp; أصدقاء الجودة — جامعة سفنكس
+    </p>
+
+    <div class="w-56 h-2 bg-white/15 rounded-full overflow-hidden">
+      <div class="h-full bg-brandOrange rounded-full splash-bar-anim"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- TOAST NOTIFICATION BANNER                                               -->
+  <!-- ======================================================================= -->
+  <div id="toastBanner" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg hidden rounded-2xl shadow-2xl p-4 text-white font-bold text-center border-2 border-white/25">
+    <div class="flex items-center justify-center gap-3">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-2xl shrink-0"></i>
+      <div class="text-right">
+        <div id="toastTitle" class="text-base sm:text-lg leading-snug"></div>
+        <div id="toastSubtitle" class="text-xs sm:text-sm font-normal opacity-95 mt-0.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- ADMIN PIN UNLOCK MODAL (PIN: 2003)                                      -->
+  <!-- ======================================================================= -->
+  <div id="adminPinModal" class="fixed inset-0 z-50 bg-brandNavy/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="adminPinCard" class="bg-white dark:bg-brandCardDark rounded-2xl max-w-sm w-full p-6 shadow-2xl border-t-4 border-brandOrange text-center relative">
+      <button onclick="closeAdminPinModal()" class="absolute top-3.5 left-3.5 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white flex items-center justify-center cursor-pointer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-14 h-14 rounded-2xl bg-brandNavy text-brandOrange flex items-center justify-center mx-auto mb-3 text-2xl shadow-md">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h3 class="text-lg font-black text-brandNavy dark:text-white">دخول المشرف العام (Admin)</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4">
+        أدخل الرقم السري المكون من 4 أرقام لفتح صلاحيات الاستيراد والشهادات والإعدادات
+      </p>
+
+      <!-- PIN Dots / Input Display -->
+      <div class="mb-3">
+        <input type="password" id="adminPinInput" maxlength="4" inputmode="numeric" pattern="[0-9]*"
+          placeholder="••••"
+          oninput="handlePinInputChange()"
+          onkeydown="if(event.key==='Enter') verifyAdminPin()"
+          class="w-44 mx-auto text-center tracking-[0.65em] text-2xl font-black py-2.5 px-4 rounded-xl border-2 border-brandNavy dark:border-slate-600 bg-brandBg dark:bg-brandMidnight text-brandNavy dark:text-white focus:border-brandOrange focus:outline-none">
+        <p id="pinErrorMsg" class="text-xs font-bold text-red-600 mt-1.5 hidden">الرقم السري غير صحيح، حاول مرة أخرى</p>
+      </div>
+
+      <!-- On-Screen Numeric Keypad -->
+      <div class="grid grid-cols-3 gap-2 max-w-[240px] mx-auto mb-4" dir="ltr">
+        <button type="button" onclick="appendPinDigit('1')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">1</button>
+        <button type="button" onclick="appendPinDigit('2')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">2</button>
+        <button type="button" onclick="appendPinDigit('3')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">3</button>
+        <button type="button" onclick="appendPinDigit('4')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">4</button>
+        <button type="button" onclick="appendPinDigit('5')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">5</button>
+        <button type="button" onclick="appendPinDigit('6')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">6</button>
+        <button type="button" onclick="appendPinDigit('7')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">7</button>
+        <button type="button" onclick="appendPinDigit('8')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">8</button>
+        <button type="button" onclick="appendPinDigit('9')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">9</button>
+        <button type="button" onclick="clearPinInput()" class="py-2.5 rounded-xl bg-red-50 dark:bg-red-950/50 hover:bg-red-100 font-bold text-xs text-red-600 cursor-pointer">مسح</button>
+        <button type="button" onclick="appendPinDigit('0')" class="py-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 font-black text-base text-brandNavy dark:text-white cursor-pointer">0</button>
+        <button type="button" onclick="verifyAdminPin()" class="py-2.5 rounded-xl bg-brandOrange hover:bg-brandOrangeHover font-extrabold text-xs text-white cursor-pointer">دخول</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- CUSTOM DOUBLE CONFIRMATION MODAL (Never uses window.confirm)            -->
+  <!-- ======================================================================= -->
+  <div id="confirmModal" class="fixed inset-0 z-50 bg-brandNavy/75 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-brandCardDark rounded-2xl max-w-md w-full p-6 shadow-2xl border-t-4 border-red-600 text-center">
+      <div class="w-14 h-14 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 flex items-center justify-center mx-auto mb-3 text-2xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 id="confirmModalTitle" class="text-lg font-extrabold text-brandNavy dark:text-white mb-2">تأكيد الإجراء</h3>
+      <p id="confirmModalText" class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">هل أنت متأكد؟</p>
+      <div class="flex gap-3">
+        <button id="confirmModalYes" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl transition cursor-pointer">
+          نعم، تأكيد نهائي
+        </button>
+        <button onclick="closeConfirmModal()" class="flex-1 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-brandNavy dark:text-white font-bold py-2.5 px-4 rounded-xl transition cursor-pointer">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- VIP TICKET PREVIEW MODAL                                                -->
+  <!-- ======================================================================= -->
+  <div id="ticketModal" class="fixed inset-0 z-50 bg-brandNavy/75 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-brandCardDark rounded-2xl max-w-sm w-full p-5 shadow-2xl border-t-4 border-brandOrange relative">
+      <button onclick="closeTicketModal()" class="absolute top-3 left-3 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white flex items-center justify-center cursor-pointer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-3">
+        <span id="modalSerialBadge" class="inline-block bg-orange-100 text-brandOrange text-xs font-black px-3 py-1 rounded-full">
+          VIP PASS #001
+        </span>
+      </div>
+
+      <div class="border-2 border-brandNavy rounded-2xl p-4 bg-white text-brandNavy text-center relative overflow-hidden">
+        <div class="h-2 bg-gradient-to-l from-brandNavy via-brandOrange to-brandNavy -mx-4 -mt-4 mb-3"></div>
+        <div class="flex items-center justify-center gap-3 mb-2">
+          <div id="modalTicketLogoQac" class="w-12 h-12 flex items-center justify-center"></div>
+          <div class="h-8 w-[1px] bg-slate-200"></div>
+          <div id="modalTicketLogoFoq" class="w-12 h-12 flex items-center justify-center"></div>
+        </div>
+        <div id="modalTicketEventTitle" class="text-xs font-black text-brandOrange mb-1">يوم الجودة الجامعي</div>
+        <h4 id="modalAttendeeName" class="text-base sm:text-lg font-extrabold text-brandNavy leading-snug"></h4>
+        <p id="modalAttendeeId" class="text-xs font-bold text-slate-600 mt-0.5"></p>
+        <div id="modalQrContainer" class="flex justify-center items-center p-2.5 bg-brandBg rounded-xl border border-slate-200 w-fit mx-auto my-2.5"></div>
+        <div id="modalStatusSummary" class="mt-2 text-[11px] font-bold text-slate-600 bg-slate-100 py-1.5 px-3 rounded-lg"></div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-2 mt-4">
+        <button id="modalDownloadPngBtn" class="w-full bg-brandNavy hover:bg-brandNavyLight text-white font-bold py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
+          <i class="fa-solid fa-download text-brandOrange"></i>
+          <span>تحميل التذكرة كصورة PNG</span>
+        </button>
+        <a id="modalWhatsappBtn" href="#" target="_blank" rel="noopener noreferrer"
+          class="w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-extrabold py-2.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          <span>إرسال التذكرة عبر واتساب</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- STORAGE HEALTH WARNING (Shown only in Incognito/Private mode if needed) -->
+  <!-- ======================================================================= -->
+  <div id="storageWarningBanner" class="hidden bg-amber-600 text-white text-xs font-bold py-2 px-4 text-center no-print">
+    <i class="fa-solid fa-triangle-exclamation ml-1"></i>
+    تنبيه: أنت تستخدم وضع التصفح الخفي (Incognito)؛ يرجى تصدير ملف المزامنة (JSON) قبل إغلاق المتصفح لضمان عدم فقدان البيانات.
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- DYNAMIC MORNING / EVENING GREETING STRIP                                -->
+  <!-- ======================================================================= -->
+  <div class="bg-brandNavy dark:bg-black/60 text-white text-xs sm:text-sm py-2 px-4 border-b border-brandOrange/40 no-print">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div id="dynamicGreetingText" class="font-bold flex items-center gap-2">
+        <span>صباح الجودة والنشاط ☀️ — أهلاً بكم في يوم الجودة الجامعي</span>
+      </div>
+      <div class="flex items-center gap-3 text-[11px] sm:text-xs text-slate-300">
+        <span id="liveDateBadge" class="font-semibold"></span>
+        <span class="inline-flex items-center gap-1 text-emerald-400 font-bold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          يعمل 100% بدون إنترنت
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- HEADER (Dual Logos + Event Title + Theme + Admin Lock — NO Dev Name)    -->
+  <!-- ======================================================================= -->
+  <header class="bg-white dark:bg-brandCardDark border-b-4 border-brandOrange shadow-sm sticky top-0 z-30 transition-colors duration-300 no-print">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2 sm:gap-3">
+
+      <!-- Dual Official Logos & Event Title -->
+      <div class="flex items-center gap-2 sm:gap-3.5 min-w-0">
+        <div id="headerLogoQac" title="مركز ضمان الجودة - جامعة سفنكس"
+          class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-white p-1 border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
+        </div>
+        <div id="headerLogoFoq" title="أصدقاء الجودة - جامعة سفنكس"
+          class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-white p-1 border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
+        </div>
+
+        <div class="min-w-0">
+          <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-brandOrange/20 text-brandOrange text-[10px] sm:text-xs font-extrabold mb-0.5">
+            <span>مركز ضمان الجودة</span>
+            <span>×</span>
+            <span>أصدقاء الجودة</span>
+          </div>
+          <h1 id="headerEventTitle" class="text-base sm:text-2xl font-black text-brandNavy dark:text-white leading-tight truncate">
+            يوم الجودة الجامعي
+          </h1>
+          <p class="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-300 truncate">
+            نظام إدارة الحضور والانصراف واستحقاق الشهادات — جامعة سفنكس
+          </p>
+        </div>
+      </div>
+
+      <!-- Header Utility & Admin Role Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Morning / Evening Mode Toggle -->
+        <button onclick="toggleThemeMode()"
+          class="p-2.5 sm:px-3 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 text-brandNavy dark:text-brandOrange border border-slate-200 dark:border-slate-700 text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer"
+          title="التبديل بين الوضع الصباحي والمسائي">
+          <i id="themeToggleIcon" class="fa-solid fa-moon text-sm"></i>
+          <span id="themeToggleLabel" class="hidden lg:inline">الوضع المسائي</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button onclick="toggleSound()"
+          class="p-2.5 rounded-xl bg-slate-100 dark:bg-brandMidnight hover:bg-slate-200 dark:hover:bg-slate-800 text-brandNavy dark:text-white border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+          title="تفعيل / كتم الصوت">
+          <i id="soundIcon" class="fa-solid fa-volume-high text-sm"></i>
+        </button>
+
+        <!-- Admin Mode Unlock / Lock Button -->
+        <button id="adminUnlockHeaderBtn" onclick="openAdminPinModal()"
+          class="py-2 px-3 rounded-xl bg-brandNavy hover:bg-brandNavyLight text-white text-xs font-extrabold shadow-xs flex items-center gap-1.5 transition cursor-pointer">
+          <span>دخول المشرف</span>
+          <span>🔒</span>
+        </button>
+
+        <div id="adminActiveHeaderControls" class="hidden items-center gap-1.5">
+          <span class="hidden md:inline-flex items-center gap-1 py-1.5 px-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold border border-emerald-300 dark:border-emerald-700">
+            وضع المشرف نشط 🔓
+          </span>
+          <button onclick="lockAdminMode()"
+            class="py-2 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold shadow-xs flex items-center gap-1 transition cursor-pointer"
+            title="قفل وضع المشرف والعودة لواجهة المنظم">
+            <span>قفل</span>
+            <i class="fa-solid fa-lock"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN WORKSPACE                                                          -->
+  <!-- ======================================================================= -->
+  <main class="max-w-6xl w-full mx-auto px-3 sm:px-4 pt-4 flex-1">
+
+    <!-- Top Control Panel: Organizer Input + Check-in/Check-out Switcher + Live Counters -->
+    <section class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 mb-4 transition-colors">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-center">
+
+        <!-- Organizer Name -->
+        <div class="lg:col-span-4">
+          <label for="organizerName" class="block text-xs font-extrabold text-brandNavy dark:text-slate-200 mb-1">
+            <i class="fa-solid fa-id-badge text-brandOrange ml-1"></i>
+            اسم المنظم / البوابة المسؤولة:
+          </label>
+          <input type="text" id="organizerName" placeholder="اكتب اسمك (مثال: أحمد - بوابة 1)"
+            oninput="saveOrganizerName()"
+            class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 focus:border-brandOrange focus:outline-none text-sm font-bold text-brandNavy dark:text-white bg-brandBg/60 dark:bg-brandMidnight">
+        </div>
+
+        <!-- Check-in vs Check-out Switcher -->
+        <div class="lg:col-span-8">
+          <span class="block text-xs font-extrabold text-brandNavy dark:text-slate-200 mb-1">
+            <i class="fa-solid fa-arrows-left-right text-brandOrange ml-1"></i>
+            وضع التسجيل الحالي (اختر دخول في بداية الندوة وخروج في نهايتها):
+          </span>
+          <div class="grid grid-cols-2 gap-2.5 bg-brandBg dark:bg-brandMidnight p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <button id="modeInBtn" onclick="setAttendanceMode('IN')"
+              class="py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer bg-brandNavy text-white shadow-md">
+              <span>🟢 تسجيل دخول</span>
+            </button>
+            <button id="modeOutBtn" onclick="setAttendanceMode('OUT')"
+              class="py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800">
+              <span>🟠 تسجيل خروج</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Statistics Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800">
+        <div class="bg-brandBg dark:bg-brandMidnight rounded-xl p-2.5 text-center border-r-4 border-brandNavy dark:border-blue-500">
+          <div id="statTotal" class="text-xl sm:text-2xl font-black text-brandNavy dark:text-white">0</div>
+          <div class="text-xs font-bold text-slate-600 dark:text-slate-400">إجمالي المسجلين</div>
+        </div>
+        <div class="bg-blue-50/70 dark:bg-blue-950/40 rounded-xl p-2.5 text-center border-r-4 border-blue-600">
+          <div id="statCheckedIn" class="text-xl sm:text-2xl font-black text-blue-800 dark:text-blue-300">0</div>
+          <div class="text-xs font-bold text-blue-900 dark:text-blue-200">سجلوا دخول</div>
+        </div>
+        <div class="bg-amber-50/70 dark:bg-amber-950/30 rounded-xl p-2.5 text-center border-r-4 border-amber-500">
+          <div id="statCheckedOut" class="text-xl sm:text-2xl font-black text-amber-700 dark:text-amber-300">0</div>
+          <div class="text-xs font-bold text-amber-900 dark:text-amber-200">سجلوا خروج</div>
+        </div>
+        <div class="bg-orange-50 dark:bg-brandOrange/15 rounded-xl p-2.5 text-center border-r-4 border-brandOrange shadow-xs">
+          <div id="statEligible" class="text-xl sm:text-2xl font-black text-brandOrange">0</div>
+          <div class="text-xs font-extrabold text-brandNavy dark:text-white">مستحقو الشهادات 🎓</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- NAVIGATION TABS (3 Organizer Tabs + 3 Admin-Only Tabs)                -->
+    <!-- ===================================================================== -->
+    <nav id="mainNavGrid" class="grid grid-cols-3 gap-2 mb-4 no-print">
+      <!-- ORGANIZER TABS (Always Visible) -->
+      <button id="tabBtn-scanner" onclick="switchTab('scanner')"
+        class="tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-brandNavy text-white border-brandNavy shadow-sm">
+        <i class="fa-solid fa-qrcode text-base"></i>
+        <span>مسح QR</span>
+      </button>
+
+      <button id="tabBtn-search" onclick="switchTab('search')"
+        class="tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange">
+        <i class="fa-solid fa-magnifying-glass text-base"></i>
+        <span>بحث وتسجيل يدوي</span>
+      </button>
+
+      <button id="tabBtn-leaderboard" onclick="switchTab('leaderboard')"
+        class="tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange">
+        <i class="fa-solid fa-trophy text-base text-brandOrange"></i>
+        <span>لوحة الشرف والمزامنة</span>
+      </button>
+
+      <!-- ADMIN-ONLY TABS (Unlocked via PIN: 2003) -->
+      <button id="tabBtn-certificates" onclick="switchTab('certificates')"
+        class="admin-only-tab hidden tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange">
+        <i class="fa-solid fa-award text-base text-brandOrange"></i>
+        <span>إدارة الشهادات والدمج</span>
+      </button>
+
+      <button id="tabBtn-tickets" onclick="switchTab('tickets')"
+        class="admin-only-tab hidden tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange">
+        <i class="fa-solid fa-ticket text-base text-brandOrange"></i>
+        <span>التذاكر والاستيراد</span>
+      </button>
+
+      <button id="tabBtn-settings" onclick="switchTab('settings')"
+        class="admin-only-tab hidden tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange">
+        <i class="fa-solid fa-gear text-base text-brandOrange"></i>
+        <span>إعدادات المشرف</span>
+      </button>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- ORGANIZER TAB 1: QR SCANNER WITH LASER + QUICK CODE + RECENT LOGS     -->
+    <!-- ===================================================================== -->
+    <section id="tab-scanner" class="tab-panel">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- Camera QR Scanner -->
+        <div class="lg:col-span-7 bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base sm:text-lg font-extrabold text-brandNavy dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-camera text-brandOrange"></i>
+              <span>مسح تذكرة المشارك بالكاميرا</span>
+            </h2>
+            <span id="scannerActiveBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              الكاميرا متوقفة
+            </span>
+          </div>
+
+          <div id="cameraSelectWrap" class="mb-3 hidden">
+            <select id="cameraSelect" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm font-semibold text-brandNavy dark:text-white bg-brandBg dark:bg-brandMidnight">
+            </select>
+          </div>
+
+          <div id="scannerFrameBox" class="relative bg-brandBg dark:bg-brandMidnight rounded-2xl border-2 border-dashed border-brandNavy/40 dark:border-brandOrange/40 min-h-[265px] flex flex-col items-center justify-center overflow-hidden mb-3 transition-all duration-300">
+            <div id="qrLaserLine" class="qr-laser-line hidden"></div>
+            <div id="qrCornerBrackets" class="hidden pointer-events-none absolute inset-4 z-10">
+              <div class="absolute top-0 right-0 w-7 h-7 border-t-4 border-r-4 border-brandOrange rounded-tr-lg"></div>
+              <div class="absolute top-0 left-0 w-7 h-7 border-t-4 border-l-4 border-brandOrange rounded-tl-lg"></div>
+              <div class="absolute bottom-0 right-0 w-7 h-7 border-b-4 border-r-4 border-brandOrange rounded-br-lg"></div>
+              <div class="absolute bottom-0 left-0 w-7 h-7 border-b-4 border-l-4 border-brandOrange rounded-bl-lg"></div>
+            </div>
+
+            <div id="qr-reader" class="w-full"></div>
+
+            <div id="scannerPlaceholder" class="text-center p-6">
+              <div class="w-16 h-16 rounded-2xl bg-brandNavy/10 dark:bg-brandOrange/15 text-brandNavy dark:text-brandOrange flex items-center justify-center mx-auto mb-3 text-3xl">
+                <i class="fa-solid fa-qrcode"></i>
+              </div>
+              <p class="text-sm font-bold text-brandNavy dark:text-white mb-1">اضغط على زر تشغيل الكاميرا بالأسفل</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">وجّه الكاميرا نحو QR Code الموجود في تذكرة الطالب</p>
+            </div>
+          </div>
+
+          <div class="flex gap-2.5">
+            <button id="startCameraBtn" onclick="startQrScanner()"
+              class="flex-1 bg-brandNavy hover:bg-brandNavyLight text-white font-bold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-video text-brandOrange"></i>
+              <span>تشغيل الكاميرا للمسح</span>
+            </button>
+            <button id="stopCameraBtn" onclick="stopQrScanner()"
+              class="hidden flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-video-slash"></i>
+              <span>إيقاف الكاميرا</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Code Input & Recent Log -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4">
+            <h3 class="text-sm sm:text-base font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-barcode text-brandOrange"></i>
+              <span>إدخال سريع بالكود / قارئ USB</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">اكتب الكود الجامعي أو رقم الهاتف واضغط Enter للتسجيل الفوري</p>
+
+            <form onsubmit="handleQuickCodeSubmit(event)" class="flex gap-2">
+              <input type="text" id="quickCodeInput" placeholder="أدخل الكود (مثال: SQ-1001)..."
+                autocomplete="off"
+                class="flex-1 px-3.5 py-2.5 rounded-xl border-2 border-brandNavy dark:border-slate-600 bg-white dark:bg-brandMidnight focus:border-brandOrange focus:outline-none text-sm font-bold text-brandNavy dark:text-white">
+              <button type="submit"
+                class="bg-brandOrange hover:bg-brandOrangeHover text-white font-extrabold px-5 py-2.5 rounded-xl shadow transition cursor-pointer">
+                تسجيل
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 flex-1">
+            <div class="flex items-center justify-between mb-2.5">
+              <h3 class="text-sm font-extrabold text-brandNavy dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-brandOrange"></i>
+                <span>آخر حركات التسجيل على هذا الجهاز</span>
+              </h3>
+            </div>
+            <div id="recentLogsList" class="space-y-2 max-h-[265px] overflow-y-auto pr-1">
+              <p class="text-xs text-slate-400 text-center py-8">لم يتم تسجيل أي حركة بعد</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ORGANIZER TAB 2: SMART FUZZY ARABIC SEARCH (TOP 40) & WALK-IN         -->
+    <!-- ===================================================================== -->
+    <section id="tab-search" class="tab-panel hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <div class="lg:col-span-8 bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+          <div class="relative mb-3">
+            <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="searchInput" oninput="renderAttendeesList()"
+              placeholder="ابحث بالاسم (يدعم أ/إ/آ و ة/ه و ى/ي)، الكود، أو رقم الهاتف..."
+              class="w-full pr-10 pl-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-brandMidnight text-brandNavy dark:text-white focus:border-brandOrange focus:outline-none text-sm font-semibold">
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <button onclick="setStatusFilter('ALL')" id="filterPill-ALL"
+              class="filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-brandNavy text-white">
+              الكل (<span id="countFilterAll">0</span>)
+            </button>
+            <button onclick="setStatusFilter('IN_ONLY')" id="filterPill-IN_ONLY"
+              class="filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              داخل القاعة (<span id="countFilterInOnly">0</span>)
+            </button>
+            <button onclick="setStatusFilter('ELIGIBLE')" id="filterPill-ELIGIBLE"
+              class="filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              مستحق للشهادة 🎓 (<span id="countFilterEligible">0</span>)
+            </button>
+            <button onclick="setStatusFilter('ABSENT')" id="filterPill-ABSENT"
+              class="filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              لم يحضر (<span id="countFilterAbsent">0</span>)
+            </button>
+          </div>
+
+          <div id="searchLimitNotice" class="hidden text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2">
+            يتم عرض أول 40 نتيجة مطابقة لضمان أقصى سرعة؛ اكتب المزيد من الأحرف لتضييق البحث.
+          </div>
+
+          <div id="attendeesListContainer" class="space-y-2.5 max-h-[520px] overflow-y-auto pr-1">
+          </div>
+        </div>
+
+        <!-- Walk-in Registration Form -->
+        <div class="lg:col-span-4">
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-t-4 border-brandOrange border-x border-b border-slate-200 dark:border-slate-800 p-4 sm:p-5 sticky top-24">
+            <h3 class="text-base font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-user-plus text-brandOrange"></i>
+              <span>تسجيل مشارك جديد (Walk-in)</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+              لإضافة طالب غير مسجل مسبقاً وتسجيل دخوله للقاعة فوراً
+            </p>
+
+            <form onsubmit="handleWalkInSubmit(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-bold text-brandNavy dark:text-slate-200 mb-1">الاسم الكامل (كما سيُطبع في الشهادة) *</label>
+                <input type="text" id="walkInName" required placeholder="مثال: محمد أحمد محمود علي"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-brandMidnight text-brandNavy dark:text-white focus:border-brandOrange focus:outline-none text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-brandNavy dark:text-slate-200 mb-1">الكود التعريفي / الجامعي (اختياري)</label>
+                <input type="text" id="walkInId" placeholder="يُولد تلقائياً إذا تركته فارغاً"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-brandMidnight text-brandNavy dark:text-white focus:border-brandOrange focus:outline-none text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-brandNavy dark:text-slate-200 mb-1">رقم الهاتف</label>
+                <input type="tel" id="walkInPhone" placeholder="01xxxxxxxxx"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-brandMidnight text-brandNavy dark:text-white focus:border-brandOrange focus:outline-none text-sm font-semibold">
+              </div>
+              <button type="submit"
+                class="w-full bg-brandOrange hover:bg-brandOrangeHover text-white font-extrabold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>إضافة وتسجيل دخول فوري</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ORGANIZER TAB 3: LEADERBOARD & DEVICE JSON SYNC                       -->
+    <!-- ===================================================================== -->
+    <section id="tab-leaderboard" class="tab-panel hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- Organizers Leaderboard -->
+        <div class="lg:col-span-6 bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base sm:text-lg font-extrabold text-brandNavy dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-trophy text-brandOrange"></i>
+              <span>لوحة شرف المنظمين (Leaderboard)</span>
+            </h2>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-orange-100 dark:bg-brandOrange/20 text-brandOrange">
+              تحديث لحظي
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            ترتيب فريق التنظيم حسب عدد حركات الدخول والخروج المسجلة
+          </p>
+
+          <div id="organizersLeaderboard" class="space-y-2.5 max-h-[340px] overflow-y-auto">
+            <p class="text-xs text-slate-400 text-center py-8">ستظهر إحصائيات المنظمين تلقائياً مع بدء التسجيل</p>
+          </div>
+        </div>
+
+        <!-- Organizer Sync Controls (Import Roster + Export Device Log) -->
+        <div class="lg:col-span-6 flex flex-col gap-4">
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-t-4 border-brandNavy dark:border-brandOrange border-x border-b border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+            <h3 class="text-base font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-download text-brandOrange"></i>
+              <span>1. تحميل قائمة المسجلين قبل الندوة</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+              استورد ملف التجهيز (<code class="font-bold">JSON</code>) الذي أرسله المشرف العام لتحميل أسماء الطلاب على جهازك قبل بدء الاستقبال.
+            </p>
+            <label class="w-full bg-brandNavy hover:bg-brandNavyLight text-white text-sm font-extrabold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-file-import text-brandOrange"></i>
+              <span>استيراد قائمة المسجلين (JSON)</span>
+              <input type="file" accept=".json" multiple class="hidden" onchange="handleMergeJson(event)">
+            </label>
+          </div>
+
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-t-4 border-brandOrange border-x border-b border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+            <h3 class="text-base font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane text-brandOrange"></i>
+              <span>2. إرسال سجل هذا الجهاز للمشرف في نهاية الندوة</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+              بعد انتهاء تسجيل الدخول أو الخروج، اضغط هنا لحفظ ملف سجل جهازك وأرسله للمشرف العام على الواتساب لدمجه واستخراج الشهادات.
+            </p>
+            <button onclick="exportDeviceJson()"
+              class="w-full bg-brandOrange hover:bg-brandOrangeHover text-white text-sm font-extrabold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-share-from-square"></i>
+              <span>تصدير سجل هذا الجهاز (JSON)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ADMIN TAB 1: CERTIFICATE ELIGIBILITY & MULTI-FILE JSON MERGE          -->
+    <!-- ===================================================================== -->
+    <section id="tab-certificates" class="tab-panel hidden">
+      <!-- Merge Organizers JSON Files Card -->
+      <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-2 border-dashed border-brandNavy/30 dark:border-brandOrange/40 p-4 sm:p-5 mb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-extrabold text-brandNavy dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-code-merge text-brandOrange"></i>
+              <span>دمج ملفات أجهزة المنظمين (Multi-Device JSON Merge)</span>
+            </h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed max-w-2xl">
+              اختر ملفات <code class="font-bold">JSON</code> الواردة من موبايلات المنظمين (يمكنك تحديد عدة ملفات دفعة واحدة)؛ يقوم النظام بدمج أوقات الدخول والخروج ومنع التكرار تلقائياً.
+            </p>
+          </div>
+
+          <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold py-3 px-5 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer shrink-0">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>دمج ملفات أجهزة المنظمين (JSON)</span>
+            <input type="file" id="mergeJsonInput" accept=".json" multiple class="hidden" onchange="handleMergeJson(event)">
+          </label>
+        </div>
+      </div>
+
+      <!-- Progress Ring + Certificate-Eligible Table -->
+      <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-5 border-b border-slate-100 dark:border-slate-800">
+
+          <!-- Circular SVG Progress Ring -->
+          <div class="flex items-center gap-4">
+            <div class="relative w-24 h-24 shrink-0 flex items-center justify-center">
+              <svg class="w-24 h-24" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="9"
+                  class="text-slate-200 dark:text-slate-700" />
+                <circle id="eligibleProgressCircle" cx="50" cy="50" r="42" fill="none" stroke="#F37021" stroke-width="9"
+                  stroke-linecap="round" stroke-dasharray="263.89" stroke-dashoffset="263.89"
+                  class="progress-ring-circle" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="eligiblePercentText" class="text-lg font-black text-brandNavy dark:text-white">0%</span>
+                <span class="text-[9px] font-bold text-slate-400">نسبة الإتمام</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="inline-block bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold px-3 py-1 rounded-full mb-1">
+                فلترة تلقائية: دخول + خروج فقط
+              </span>
+              <h2 class="text-lg sm:text-xl font-extrabold text-brandNavy dark:text-white">
+                المستحقون للشهادات (<span id="eligibleTableCount" class="text-brandOrange">0</span> مشارك)
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                تضم هذه القائمة فقط من أتم الحضور من البداية للنهاية واستحق الشهادة
+              </p>
+            </div>
+          </div>
+
+          <!-- Export Buttons -->
+          <div class="flex flex-wrap gap-2">
+            <button onclick="exportEligibleExcel()"
+              class="bg-brandNavy hover:bg-brandNavyLight text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl shadow transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-file-excel text-emerald-400"></i>
+              <span>تحميل Excel (.xlsx)</span>
+            </button>
+            <button onclick="exportEligibleCSV()"
+              class="bg-brandOrange hover:bg-brandOrangeHover text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl shadow transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-file-csv"></i>
+              <span>تحميل CSV</span>
+            </button>
+            <button onclick="copyEligibleNamesOnly()"
+              class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-copy text-brandOrange"></i>
+              <span>نسخ الأسماء المستحقة</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="bg-brandNavy text-white text-xs sm:text-sm">
+                <th class="py-3 px-3 rounded-tr-xl">#</th>
+                <th class="py-3 px-3">الكود</th>
+                <th class="py-3 px-3">الاسم الكامل المستحق للشهادة</th>
+                <th class="py-3 px-3">الهاتف</th>
+                <th class="py-3 px-3">وقت الدخول</th>
+                <th class="py-3 px-3">وقت الخروج</th>
+                <th class="py-3 px-3 rounded-tl-xl">المسجل</th>
+              </tr>
+            </thead>
+            <tbody id="eligibleTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ADMIN TAB 2: EXCEL/CSV IMPORT, VIP TICKETS (PAGINATED) & WHATSAPP     -->
+    <!-- ===================================================================== -->
+    <section id="tab-tickets" class="tab-panel hidden">
+      <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5 mb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-brandNavy dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-excel text-brandOrange"></i>
+              <span>استيراد ملف Excel / CSV وتوليد تذاكر VIP</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              يمكنك رفع أكثر من ملف إكسيل بالتتابع؛ سيضيف النظام الأسماء الجديدة تلقائياً دون مسح المسجلين السابقين
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <label class="bg-brandNavy hover:bg-brandNavyLight text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl shadow transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-upload text-brandOrange"></i>
+              <span>استيراد ملف Excel / CSV</span>
+              <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelImport(event)">
+            </label>
+
+            <button onclick="downloadExcelTemplate()"
+              class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white text-xs sm:text-sm font-bold py-2.5 px-3.5 rounded-xl border border-slate-300 dark:border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-file-arrow-down text-brandOrange"></i>
+              <span>نموذج Excel</span>
+            </button>
+
+            <button onclick="loadDemoData()"
+              class="bg-orange-50 dark:bg-brandOrange/20 hover:bg-orange-100 text-brandOrange text-xs sm:text-sm font-bold py-2.5 px-3.5 rounded-xl border border-brandOrange/30 transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>بيانات تجريبية</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4">
+          <div class="flex items-center gap-3 flex-1">
+            <input type="text" id="ticketSearchInput" oninput="resetTicketPaginationAndRender()"
+              placeholder="ابحث داخل التذاكر بالاسم أو الكود..."
+              class="w-full max-w-xs px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-brandBg dark:bg-brandMidnight text-brandNavy dark:text-white text-xs font-bold focus:border-brandOrange focus:outline-none">
+            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0">
+              الإجمالي: <strong id="ticketsCountBadge" class="text-brandOrange">0</strong>
+            </span>
+          </div>
+
+          <button onclick="printAllTicketsA4()"
+            class="bg-brandOrange hover:bg-brandOrangeHover text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-print"></i>
+            <span>طباعة جميع التذاكر (A4)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paginated VIP Tickets Grid (30 per page for 60fps performance) -->
+      <div id="vipTicketsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      </div>
+
+      <div id="loadMoreTicketsWrap" class="hidden text-center mt-5">
+        <button onclick="loadMoreTickets()"
+          class="bg-brandNavy hover:bg-brandNavyLight text-white text-sm font-extrabold py-3 px-6 rounded-xl shadow transition cursor-pointer">
+          عرض 30 تذكرة إضافية <i class="fa-solid fa-chevron-down mr-1 text-brandOrange"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- ADMIN TAB 3: ADMIN SETTINGS, LOGO UPLOAD, ROSTER EXPORT & RESET       -->
+    <!-- ===================================================================== -->
+    <section id="tab-settings" class="tab-panel hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- Event Title & Custom Logos -->
+        <div class="lg:col-span-7 bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+          <h3 class="text-base sm:text-lg font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-brandOrange"></i>
+            <span>تخصيص عنوان الفعالية والشعارات</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            تظهر هذه البيانات في شاشة البداية والهيدر وتذاكر VIP
+          </p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-extrabold text-brandNavy dark:text-slate-200 mb-1">اسم الندوة / الفعالية:</label>
+              <input type="text" id="settingsEventTitleInput" value="يوم الجودة الجامعي"
+                class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-brandMidnight text-brandNavy dark:text-white text-sm font-bold focus:border-brandOrange focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-brandBg dark:bg-brandMidnight text-center">
+                <p class="text-xs font-extrabold text-brandNavy dark:text-white mb-2">شعار مركز ضمان الجودة</p>
+                <label class="inline-flex items-center gap-1.5 bg-brandNavy hover:bg-brandNavyLight text-white text-xs font-bold py-2 px-3.5 rounded-lg cursor-pointer transition">
+                  <i class="fa-solid fa-image text-brandOrange"></i>
+                  <span>رفع صورة مخصصة</span>
+                  <input type="file" accept="image/*" class="hidden" onchange="handleLogoFileUpload(event, 'qac')">
+                </label>
+              </div>
+
+              <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-brandBg dark:bg-brandMidnight text-center">
+                <p class="text-xs font-extrabold text-brandNavy dark:text-white mb-2">شعار أصدقاء الجودة</p>
+                <label class="inline-flex items-center gap-1.5 bg-brandNavy hover:bg-brandNavyLight text-white text-xs font-bold py-2 px-3.5 rounded-lg cursor-pointer transition">
+                  <i class="fa-solid fa-image text-brandOrange"></i>
+                  <span>رفع صورة مخصصة</span>
+                  <input type="file" accept="image/*" class="hidden" onchange="handleLogoFileUpload(event, 'foq')">
+                </label>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2.5 pt-1">
+              <button onclick="saveEventSettings()"
+                class="flex-1 bg-brandOrange hover:bg-brandOrangeHover text-white font-extrabold py-2.5 px-4 rounded-xl shadow transition cursor-pointer">
+                حفظ التعديلات
+              </button>
+              <button onclick="resetCustomLogos()"
+                class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white text-xs font-bold py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 transition cursor-pointer">
+                استعادة الشعارات الافتراضية
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Organizer Package Export & System Reset -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-t-4 border-brandNavy dark:border-brandOrange border-x border-b border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+            <h3 class="text-base font-extrabold text-brandNavy dark:text-white mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-users-gear text-brandOrange"></i>
+              <span>تجهيز فريق التنظيم قبل الفعالية</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+              بعد رفع ملفات الإكسيل، صدّر هذا الملف وأرسله للمنظمين ليقوموا باستيراده على هواتفهم قبل بدء الاستقبال.
+            </p>
+            <button onclick="exportOrganizerRosterJson()"
+              class="w-full bg-brandNavy hover:bg-brandNavyLight text-white text-xs sm:text-sm font-extrabold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-file-export text-brandOrange"></i>
+              <span>تصدير ملف التجهيز للمنظمين (JSON)</span>
+            </button>
+          </div>
+
+          <div class="bg-white dark:bg-brandCardDark rounded-2xl shadow-sm border-t-4 border-red-600 border-x border-b border-slate-200 dark:border-slate-800 p-4 sm:p-5">
+            <h3 class="text-base font-extrabold text-red-600 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>منطقة الخطر — تصفير النظام</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+              يُستخدم فقط بعد انتهاء الفعالية وتحميل كشف الشهادات، لبدء فعالية جديدة ببيانات فارغة.
+            </p>
+            <button onclick="confirmResetAllDataStep1()"
+              class="w-full bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-extrabold py-3 px-4 rounded-xl shadow transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>مسح جميع البيانات وتصفير النظام</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Hidden Offscreen Print Area for A4 Batch Printing -->
+  <div id="printable-print-sheet" class="hidden"></div>
+
+  <!-- ======================================================================= -->
+  <!-- OFFICIAL FOOTER (Quality Assurance Center Director & Developer Credit)  -->
+  <!-- ======================================================================= -->
+  <footer class="fixed bottom-0 inset-x-0 bg-brandNavy dark:bg-black text-white border-t-4 border-brandOrange py-2.5 px-4 z-40 shadow-lg no-print">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center text-xs sm:text-sm">
+      <div class="font-extrabold text-white flex items-center gap-2">
+        <i class="fa-solid fa-award text-brandOrange"></i>
+        <span>مدير مركز ضمان الجودة: <span class="text-brandOrange">أ.د/ غادة عبدالرحمن</span></span>
+      </div>
+
+      <div class="font-semibold tracking-wide flex items-center gap-2" dir="ltr">
+        <span class="text-slate-200">Designed &amp; Developed by <strong class="text-brandOrange">Islam Jaheen</strong></span>
+        <a href="https://www.linkedin.com/in/eslam-fawzy-jaheen-b76541283?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="LinkedIn Profile - Islam Jaheen"
+           title="Connect with Islam Jaheen on LinkedIn"
+           class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white transition transform hover:scale-110 shadow">
+          <i class="fa-brands fa-linkedin-in text-sm"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT ENGINE (O(1) Indexed, High-Capacity & Zero-Bug)              -->
+  <!-- ======================================================================= -->
+  <script>
+    // Constants & Storage Keys
+    const ADMIN_PIN = "2003";
+    const STORAGE_KEY_ATTENDEES = "sphinx_qday_attendees_v3";
+    const STORAGE_KEY_ORGANIZER = "sphinx_qday_organizer_v3";
+    const STORAGE_KEY_LOGS = "sphinx_qday_logs_v3";
+    const STORAGE_KEY_SETTINGS = "sphinx_qday_settings_v3";
+    const STORAGE_KEY_THEME = "sphinx_qday_theme_v3";
+
+    // Core Application State
+    let attendees = [];
+    let recentLogs = [];
+    let idIndexMap = new Map();     // O(1) instant lookup by normalized ID
+    let phoneIndexMap = new Map();  // O(1) instant lookup by normalized Phone
+    let isAdminUnlocked = false;
+    let currentTab = "scanner";
+    let currentMode = "IN";
+    let currentStatusFilter = "ALL";
+    let soundEnabled = true;
+    let ticketsVisibleLimit = 30;
+
+    let appSettings = {
+      eventTitle: "يوم الجودة الجامعي",
+      customQacLogo: "",
+      customFoqLogo: ""
+    };
+
+    // QR Scanner State
+    let html5QrCode = null;
+    let isCameraRunning = false;
+    let lastScannedCode = "";
+    let lastScannedTime = 0;
+
+    // =========================================================================
+    // 1. VECTOR SVG LOGOS (Quality Assurance Center & Friends of Quality)
+    // =========================================================================
+    function getQacLogoSvg(uid = "1") {
+      if (appSettings.customQacLogo) {
+        return `<img src="${appSettings.customQacLogo}" alt="مركز ضمان الجودة" class="w-full h-full object-contain rounded-lg">`;
+      }
+      return `
+        <svg viewBox="0 0 220 220" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <path id="qacTopArc-${uid}" d="M 24,110 A 86,86 0 1,1 196,110" />
+            <path id="qacBotArc-${uid}" d="M 20,114 A 90,90 0 0,0 200,114" />
+          </defs>
+          <path d="M 24,95 A 87,87 0 0,0 24,128" fill="none" stroke="#1E242B" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 196,95 A 87,87 0 0,1 196,128" fill="none" stroke="#1E242B" stroke-width="2.5" stroke-linecap="round"/>
+
+          <text fill="#1E242B" font-family="Cinzel, serif" font-weight="900" font-size="14.5" letter-spacing="1.6">
+            <textPath href="#qacTopArc-${uid}" startOffset="50%" text-anchor="middle">SPHINX UNIVERSITY</textPath>
+          </text>
+          <text fill="#F37021" font-family="Cinzel, serif" font-weight="900" font-size="12.2" letter-spacing="1.1">
+            <textPath href="#qacBotArc-${uid}" startOffset="50%" text-anchor="middle">QUALITY ASSURANCE CENTER</textPath>
+          </text>
+
+          <path d="M 110,45 L 156,62 L 156,105 C 156,138 135,160 110,172 C 85,160 64,138 64,105 L 64,62 Z"
+                fill="#FFFFFF" stroke="#F37021" stroke-width="4.5" stroke-linejoin="round"/>
+
+          <g transform="translate(110, 112)">
+            <path d="M -22,-32 C -34,-26 -42,-8 -46,24 L -32,38 L -20,32 L -18,12 L 18,12 L 20,32 L 32,38 L 46,24 C 42,-8 34,-26 22,-32 Z" fill="#1E242B"/>
+            <line x1="-38" y1="-10" x2="-22" y2="-10" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="-41" y1="-1" x2="-21" y2="-1" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="-43" y1="8" x2="-20" y2="8" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="-44" y1="17" x2="-21" y2="17" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="22" y1="-10" x2="38" y2="-10" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="21" y1="-1" x2="41" y2="-1" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="20" y1="8" x2="43" y2="8" stroke="#FFFFFF" stroke-width="2.2"/>
+            <line x1="21" y1="17" x2="44" y2="17" stroke="#FFFFFF" stroke-width="2.2"/>
+
+            <path d="M -18,-30 Q 0,-42 18,-30 L 15,-22 Q 0,-28 -15,-22 Z" fill="#1E242B" stroke="#FFFFFF" stroke-width="1.5"/>
+            <rect x="-3.5" y="-36" width="7" height="11" rx="3" fill="#FFFFFF" stroke="#1E242B" stroke-width="1.8"/>
+
+            <path d="M -15,-20 L 15,-20 L 13,4 L 0,14 L -13,4 Z" fill="#FFFFFF" stroke="#1E242B" stroke-width="2.2"/>
+            <line x1="-9" y1="-9" x2="-3" y2="-9" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="3" y1="-9" x2="9" y2="-9" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M 0,-9 L -2,0 L 2,0" fill="none" stroke="#1E242B" stroke-width="1.8"/>
+            <line x1="-5" y1="5" x2="5" y2="5" stroke="#1E242B" stroke-width="2"/>
+
+            <rect x="-5" y="13" width="10" height="24" rx="2" fill="#1E242B"/>
+            <line x1="-5" y1="19" x2="5" y2="19" stroke="#FFFFFF" stroke-width="1.5"/>
+            <line x1="-5" y1="25" x2="5" y2="25" stroke="#FFFFFF" stroke-width="1.5"/>
+            <line x1="-5" y1="31" x2="5" y2="31" stroke="#FFFFFF" stroke-width="1.5"/>
+            <path d="M -24,39 L 24,39 L 18,46 L -18,46 Z" fill="#1E242B"/>
+          </g>
+        </svg>
+      `;
+    }
+
+    function getFoqLogoSvg() {
+      if (appSettings.customFoqLogo) {
+        return `<img src="${appSettings.customFoqLogo}" alt="أصدقاء الجودة" class="w-full h-full object-contain rounded-lg">`;
+      }
+      return `
+        <svg viewBox="0 0 260 225" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <line x1="76" y1="56" x2="90" y2="63" stroke="#03254C" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="94" y1="28" x2="104" y2="41" stroke="#03254C" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="130" y1="16" x2="130" y2="33" stroke="#03254C" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="166" y1="28" x2="156" y2="41" stroke="#03254C" stroke-width="6.5" stroke-linecap="round"/>
+          <line x1="184" y1="56" x2="170" y2="63" stroke="#03254C" stroke-width="6.5" stroke-linecap="round"/>
+
+          <g transform="translate(130, 68)">
+            <g fill="#F37021">
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(0)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(30)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(60)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(90)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(120)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(150)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(180)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(210)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(240)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(270)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(300)"/>
+              <rect x="-4.5" y="-31" width="9" height="10" rx="2" transform="rotate(330)"/>
+            </g>
+            <circle cx="0" cy="0" r="24" fill="#F37021"/>
+            <circle cx="0" cy="0" r="15" fill="#FFFFFF"/>
+            <circle cx="0" cy="0" r="11.5" fill="#03254C"/>
+            <path d="M-5.5 0.5 L-1.5 4.5 L6 -4" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+
+          <circle cx="130" cy="109" r="9.5" fill="#03254C"/>
+          <path d="M106 102 C104 99, 108 96, 111 99 L123 116 L137 116 L149 99 C152 96, 156 99, 154 102 L141 124 L141 146 L130 154 L119 146 L119 124 Z" fill="#03254C"/>
+
+          <circle cx="94" cy="117" r="8.5" fill="#03254C"/>
+          <path d="M75 113 C73 110, 77 107, 80 110 L90 123 L103 123 L113 112 L117 117 L104 131 L104 146 L86 143 L86 129 Z" fill="#03254C"/>
+
+          <circle cx="166" cy="117" r="8.5" fill="#03254C"/>
+          <path d="M185 113 C187 110, 183 107, 180 110 L170 123 L157 123 L147 112 L143 117 L156 131 L156 146 L174 143 L174 129 Z" fill="#03254C"/>
+
+          <path d="M56 146 Q95 137 130 158 Q165 137 204 146 L198 156 Q163 148 130 166 Q97 148 62 156 Z" fill="#F37021"/>
+          <path d="M50 156 Q92 147 130 169 Q168 147 210 156 L204 166 Q166 157 130 177 Q94 157 56 166 Z" fill="#03254C"/>
+
+          <text x="130" y="198" text-anchor="middle" font-family="Cairo, sans-serif" font-weight="900" font-size="24">
+            <tspan fill="#03254C">أصدقاء </tspan><tspan fill="#F37021">الجودة</tspan>
+          </text>
+          <text x="130" y="217" text-anchor="middle" font-family="Cinzel, serif" font-weight="800" font-size="11.5" letter-spacing="2.2" fill="#03254C">
+            SPHINX UNIVERSITY
+          </text>
+        </svg>
+      `;
+    }
+
+    function renderAllBrandLogos() {
+      document.getElementById("splashLogoQac").innerHTML = getQacLogoSvg("splash");
+      document.getElementById("splashLogoFoq").innerHTML = getFoqLogoSvg();
+      document.getElementById("headerLogoQac").innerHTML = getQacLogoSvg("header");
+      document.getElementById("headerLogoFoq").innerHTML = getFoqLogoSvg();
+    }
+
+    // =========================================================================
+    // 2. INITIALIZATION, STORAGE HEALTH CHECK & THEME
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      checkStorageHealth();
+      loadStateFromStorage();
+      rebuildLookupIndexes();
+      applySettingsToUI();
+      renderAllBrandLogos();
+      initThemeAndGreeting();
+
+      const savedOrg = localStorage.getItem(STORAGE_KEY_ORGANIZER);
+      if (savedOrg) {
+        document.getElementById("organizerName").value = savedOrg;
+      }
+
+      refreshAllUI();
+
+      setTimeout(() => {
+        const splash = document.getElementById("splashScreen");
+        if (splash) {
+          splash.style.opacity = "0";
+          setTimeout(() => splash.classList.add("hidden"), 500);
+        }
+      }, 1300);
+    });
+
+    function checkStorageHealth() {
+      try {
+        const testKey = "__sq_health_test__";
+        localStorage.setItem(testKey, "1");
+        localStorage.removeItem(testKey);
+      } catch (e) {
+        document.getElementById("storageWarningBanner").classList.remove("hidden");
+      }
+    }
+
+    function initThemeAndGreeting() {
+      const hour = new Date().getHours();
+      const isEvening = hour >= 17 || hour < 5;
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+
+      if (savedTheme === "dark" || (!savedTheme && isEvening)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      updateThemeToggleButton();
+      updateDynamicGreeting();
+    }
+
+    function toggleThemeMode() {
+      const isDark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem(STORAGE_KEY_THEME, isDark ? "dark" : "light");
+      updateThemeToggleButton();
+      showToast(
+        isDark ? "تم تفعيل الوضع المسائي 🌙" : "تم تفعيل الوضع الصباحي ☀️",
+        isDark ? "إضاءة مريحة للقاعات المظلمة" : "وضوح عالٍ للإضاءة النهارية",
+        "success"
+      );
+    }
+
+    function updateThemeToggleButton() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const icon = document.getElementById("themeToggleIcon");
+      const label = document.getElementById("themeToggleLabel");
+      if (isDark) {
+        icon.className = "fa-solid fa-sun text-sm text-brandOrange";
+        label.innerText = "الوضع الصباحي";
+      } else {
+        icon.className = "fa-solid fa-moon text-sm text-brandNavy";
+        label.innerText = "الوضع المسائي";
+      }
+    }
+
+    function updateDynamicGreeting() {
+      const hour = new Date().getHours();
+      const isMorning = hour >= 5 && hour < 17;
+      const title = appSettings.eventTitle || "يوم الجودة الجامعي";
+      const greetingEl = document.getElementById("dynamicGreetingText");
+
+      greetingEl.innerHTML = isMorning
+        ? `<span>صباح الجودة والنشاط ☀️ — أهلاً بكم في <strong class="text-brandOrange">${escapeHtml(title)}</strong></span>`
+        : `<span>مساء التميز والإبداع 🌙 — أهلاً بكم في <strong class="text-brandOrange">${escapeHtml(title)}</strong></span>`;
+
+      document.getElementById("liveDateBadge").innerText = new Date().toLocaleDateString("ar-EG", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    // =========================================================================
+    // 3. NORMALIZATION, O(1) INDEXING & PHONE FORMATTING
+    // =========================================================================
+    function normalizeArabic(text) {
+      return String(text || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[\u064B-\u065F\u0670]/g, "")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ة/g, "ه")
+        .replace(/ى/g, "ي")
+        .replace(/\s+/g, " ");
+    }
+
+    function normalizeEgyptianPhone(rawPhone) {
+      let digits = String(rawPhone || "")
+        .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+        .replace(/\D/g, "");
+
+      if (!digits) return "";
+      if (digits.startsWith("0020")) digits = "0" + digits.slice(4);
+      else if (digits.startsWith("20") && digits.length === 12) digits = "0" + digits.slice(2);
+      else if (digits.length === 10 && /^1[0125]/.test(digits)) digits = "0" + digits;
+
+      return digits;
+    }
+
+    function getWhatsAppUrl(person) {
+      const phone = normalizeEgyptianPhone(person.phone);
+      if (!phone || phone.length < 10) return "";
+      const waNumber = phone.startsWith("0") ? "20" + phone.slice(1) : phone;
+      const eventTitle = appSettings.eventTitle || "يوم الجودة الجامعي";
+      const msg =
+        `أهلاً بك يا *${person.name}* 👋\n` +
+        `تم تأكيد تسجيلك في فعالية *${eventTitle}* بجامعة سفنكس 🎓\n\n` +
+        `📌 *الكود التعريفي الخاص بك:* ${person.id}\n` +
+        `يرجى الاحتفاظ بهذه الرسالة وإبراز كودك عند الدخول وعند الخروج لاستحقاق الشهادة.`;
+
+      return `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+    }
+
+    // Build O(1) lookup maps & pre-computed search strings for 60fps performance
+    function rebuildLookupIndexes() {
+      idIndexMap.clear();
+      phoneIndexMap.clear();
+
+      attendees.forEach(person => {
+        person.inStatus = person.inStatus === true || person.inStatus === "تم";
+        person.outStatus = person.outStatus === true || person.outStatus === "تم";
+        person.phone = normalizeEgyptianPhone(person.phone);
+
+        // Pre-compute normalized search blob in memory
+        person._normSearch = normalizeArabic(`${person.name} ${person.id} ${person.phone} ${person.email || ""}`);
+
+        const normId = normalizeArabic(person.id);
+        if (normId) idIndexMap.set(normId, person);
+
+        if (person.phone) phoneIndexMap.set(person.phone, person);
+      });
+    }
+
+    function loadStateFromStorage() {
+      try {
+        const rawAttendees = localStorage.getItem(STORAGE_KEY_ATTENDEES);
+        attendees = rawAttendees ? JSON.parse(rawAttendees) : [];
+        const rawLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+        recentLogs = rawLogs ? JSON.parse(rawLogs) : [];
+        const rawSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (rawSettings) {
+          appSettings = { ...appSettings, ...JSON.parse(rawSettings) };
+        }
+      } catch (e) {
+        console.error("Storage read error:", e);
+      }
+    }
+
+    function saveStateToStorage() {
+      try {
+        // Strip transient _normSearch property before serializing to save space
+        const cleanList = attendees.map(({ _normSearch, ...rest }) => rest);
+        localStorage.setItem(STORAGE_KEY_ATTENDEES, JSON.stringify(cleanList));
+        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(recentLogs.slice(0, 40)));
+      } catch (e) {
+        showToast("تنبيه التخزين", "ذاكرة المتصفح ممتلئة، يرجى تصدير ملف المزامنة JSON فوراً.", "error");
+      }
+    }
+
+    function saveOrganizerName() {
+      localStorage.setItem(STORAGE_KEY_ORGANIZER, document.getElementById("organizerName").value);
+    }
+
+    function getOrganizerName() {
+      return document.getElementById("organizerName").value.trim() || "منظم";
+    }
+
+    // =========================================================================
+    // 4. ROLE-BASED ACCESS CONTROL (ADMIN PIN: 2003)
+    // =========================================================================
+    function openAdminPinModal() {
+      document.getElementById("adminPinInput").value = "";
+      document.getElementById("pinErrorMsg").classList.add("hidden");
+      const modal = document.getElementById("adminPinModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => document.getElementById("adminPinInput").focus(), 80);
+    }
+
+    function closeAdminPinModal() {
+      const modal = document.getElementById("adminPinModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function appendPinDigit(digit) {
+      const input = document.getElementById("adminPinInput");
+      if (input.value.length < 4) {
+        input.value += digit;
+        handlePinInputChange();
+      }
+    }
+
+    function clearPinInput() {
+      document.getElementById("adminPinInput").value = "";
+      document.getElementById("pinErrorMsg").classList.add("hidden");
+    }
+
+    function handlePinInputChange() {
+      const val = document.getElementById("adminPinInput").value;
+      if (val.length === 4) {
+        verifyAdminPin();
+      }
+    }
+
+    function verifyAdminPin() {
+      const input = document.getElementById("adminPinInput");
+      const errorMsg = document.getElementById("pinErrorMsg");
+      const card = document.getElementById("adminPinCard");
+
+      if (input.value === ADMIN_PIN) {
+        isAdminUnlocked = true;
+        closeAdminPinModal();
+        applyRoleUI();
+        playFeedbackSound("checkin");
+        showToast("تم فتح وضع المشرف العام 🔓", "أصبحت جميع صلاحيات الاستيراد والشهادات والإعدادات متاحة الآن.", "success");
+        switchTab("certificates");
+      } else {
+        errorMsg.classList.remove("hidden");
+        card.classList.remove("shake-anim");
+        void card.offsetWidth;
+        card.classList.add("shake-anim");
+        playFeedbackSound("error");
+        input.value = "";
+        input.focus();
+      }
+    }
+
+    function lockAdminMode() {
+      isAdminUnlocked = false;
+      applyRoleUI();
+      if (["certificates", "tickets", "settings"].includes(currentTab)) {
+        switchTab("scanner");
+      }
+      showToast("تم قفل وضع المشرف 🔒", "تمت العودة إلى واجهة المنظِّم القياسية.", "warning");
+    }
+
+    function applyRoleUI() {
+      const unlockBtn = document.getElementById("adminUnlockHeaderBtn");
+      const activeControls = document.getElementById("adminActiveHeaderControls");
+      const navGrid = document.getElementById("mainNavGrid");
+      const adminTabs = document.querySelectorAll(".admin-only-tab");
+
+      if (isAdminUnlocked) {
+        unlockBtn.classList.add("hidden");
+        activeControls.classList.remove("hidden");
+        activeControls.classList.add("flex");
+        navGrid.className = "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-4 no-print";
+        adminTabs.forEach(t => t.classList.remove("hidden"));
+      } else {
+        unlockBtn.classList.remove("hidden");
+        activeControls.classList.add("hidden");
+        activeControls.classList.remove("flex");
+        navGrid.className = "grid grid-cols-3 gap-2 mb-4 no-print";
+        adminTabs.forEach(t => t.classList.add("hidden"));
+      }
+    }
+
+    // =========================================================================
+    // 5. NAVIGATION TABS, MODE SWITCHER & LIVE UI REFRESH
+    // =========================================================================
+    function setAttendanceMode(mode) {
+      currentMode = mode;
+      const btnIn = document.getElementById("modeInBtn");
+      const btnOut = document.getElementById("modeOutBtn");
+
+      if (mode === "IN") {
+        btnIn.className = "py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer bg-brandNavy text-white shadow-md";
+        btnOut.className = "py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800";
+      } else {
+        btnIn.className = "py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800";
+        btnOut.className = "py-3 px-3 rounded-xl font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer bg-brandOrange text-white shadow-md";
+      }
+      renderAttendeesList();
+    }
+
+    function switchTab(tabName) {
+      if (["certificates", "tickets", "settings"].includes(tabName) && !isAdminUnlocked) {
+        openAdminPinModal();
+        return;
+      }
+
+      currentTab = tabName;
+      const allTabs = ["scanner", "search", "leaderboard", "certificates", "tickets", "settings"];
+      allTabs.forEach(t => {
+        const panel = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (!panel || !btn) return;
+
+        if (t === tabName) {
+          panel.classList.remove("hidden");
+          btn.className = `${btn.classList.contains("admin-only-tab") ? "admin-only-tab " : ""}tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-brandNavy text-white border-brandNavy shadow-sm`;
+        } else {
+          panel.classList.add("hidden");
+          btn.className = `${btn.classList.contains("admin-only-tab") ? "admin-only-tab " : ""}tab-btn py-3 px-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 border-2 transition cursor-pointer bg-white dark:bg-brandCardDark text-brandNavy dark:text-white border-slate-200 dark:border-slate-700 hover:border-brandOrange`;
+        }
+      });
+
+      if (tabName !== "scanner" && isCameraRunning) stopQrScanner();
+      if (tabName === "search") renderAttendeesList();
+      if (tabName === "leaderboard") renderOrganizersLeaderboard();
+      if (tabName === "certificates") renderEligibleTable();
+      if (tabName === "tickets") resetTicketPaginationAndRender();
+    }
+
+    function refreshAllUI() {
+      updateCounters();
+      renderRecentLogs();
+      if (currentTab === "search") renderAttendeesList();
+      if (currentTab === "leaderboard") renderOrganizersLeaderboard();
+      if (currentTab === "certificates") renderEligibleTable();
+      if (currentTab === "tickets") renderVipTicketsGrid();
+    }
+
+    function updateCounters() {
+      const total = attendees.length;
+      let checkedIn = 0;
+      let checkedOut = 0;
+      let eligible = 0;
+
+      for (let i = 0; i < total; i++) {
+        const a = attendees[i];
+        if (a.inStatus) checkedIn++;
+        if (a.outStatus) checkedOut++;
+        if (a.inStatus && a.outStatus) eligible++;
+      }
+
+      const inOnly = checkedIn - eligible;
+      const absent = total - checkedIn;
+
+      document.getElementById("statTotal").innerText = total;
+      document.getElementById("statCheckedIn").innerText = checkedIn;
+      document.getElementById("statCheckedOut").innerText = checkedOut;
+      document.getElementById("statEligible").innerText = eligible;
+      document.getElementById("ticketsCountBadge").innerText = total;
+      document.getElementById("eligibleTableCount").innerText = eligible;
+
+      document.getElementById("countFilterAll").innerText = total;
+      document.getElementById("countFilterInOnly").innerText = inOnly;
+      document.getElementById("countFilterEligible").innerText = eligible;
+      document.getElementById("countFilterAbsent").innerText = absent;
+
+      // Update Circular Progress Ring
+      const percent = total > 0 ? Math.round((eligible / total) * 100) : 0;
+      const circumference = 263.89;
+      const offset = circumference - (percent / 100) * circumference;
+      const circleEl = document.getElementById("eligibleProgressCircle");
+      if (circleEl) circleEl.style.strokeDashoffset = offset;
+      const percentEl = document.getElementById("eligiblePercentText");
+      if (percentEl) percentEl.innerText = `${percent}%`;
+    }
+
+    // =========================================================================
+    // 6. CORE ATTENDANCE LOGIC (O(1) LOOKUP), CONFETTI & SOUND
+    // =========================================================================
+    function formatNowTime() {
+      return new Date().toLocaleTimeString("ar-EG", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      });
+    }
+
+    function triggerBrandConfetti() {
+      if (typeof confetti !== "function") return;
+      confetti({
+        particleCount: 80,
+        spread: 72,
+        origin: { y: 0.65 },
+        colors: ["#03254C", "#F37021", "#FFFFFF", "#FFB703"]
+      });
+    }
+
+    function triggerHapticFeedback(pattern) {
+      try {
+        if (navigator.vibrate) navigator.vibrate(pattern);
+      } catch (e) {}
+    }
+
+    function findAttendeeFast(rawQuery) {
+      const qNorm = normalizeArabic(rawQuery);
+      if (!qNorm) return null;
+
+      // 1. O(1) lookup by ID
+      if (idIndexMap.has(qNorm)) return idIndexMap.get(qNorm);
+
+      // 2. O(1) lookup by Egyptian Phone
+      const qPhone = normalizeEgyptianPhone(rawQuery);
+      if (qPhone && phoneIndexMap.has(qPhone)) return phoneIndexMap.get(qPhone);
+
+      // 3. Fallback exact match by Name or Email
+      return attendees.find(a =>
+        normalizeArabic(a.name) === qNorm ||
+        normalizeArabic(a.email) === qNorm
+      ) || null;
+    }
+
+    function processAttendanceRecord(rawQuery) {
+      const query = String(rawQuery || "").trim();
+      if (!query) return;
+
+      if (attendees.length === 0) {
+        playFeedbackSound("error");
+        triggerHapticFeedback([200, 80, 200]);
+        showToast("القائمة فارغة!", "يرجى استيراد قائمة المسجلين أو إضافة مشارك جديد أولاً.", "error");
+        return;
+      }
+
+      const person = findAttendeeFast(query);
+      if (!person) {
+        playFeedbackSound("error");
+        triggerHapticFeedback([200, 80, 200]);
+        showToast("غير مسجل في الكشف", `لم يتم العثور على مشارك بهذا الكود أو البيان: (${query})`, "error");
+        addRecentLog(query, "غير مسجل بالكشف", "error");
+        return;
+      }
+
+      const now = formatNowTime();
+      const org = getOrganizerName();
+
+      if (currentMode === "IN") {
+        if (person.inStatus) {
+          playFeedbackSound("warning");
+          triggerHapticFeedback([100, 50, 100]);
+          showToast(person.name, `مسجل دخول مسبقاً الساعة ${person.inTime}`, "warning");
+          addRecentLog(person.name, `تنبيه: دخول مكرر (${person.inTime})`, "warning");
+          return;
+        }
+
+        person.inStatus = true;
+        person.inTime = now;
+        person.inTimestamp = Date.now();
+        person.inOrganizer = org;
+        person.organizer = org;
+        saveStateToStorage();
+        refreshAllUI();
+
+        playFeedbackSound("checkin");
+        triggerHapticFeedback([65]);
+        flashScannerGreen();
+        showToast(`✅ ${person.name}`, `تم تسجيل الدخول بنجاح (${now})`, "success");
+        addRecentLog(person.name, `دخول ناجح بواسطة ${org} (${now})`, "success");
+
+      } else {
+        if (!person.inStatus) {
+          playFeedbackSound("error");
+          triggerHapticFeedback([220, 80, 220]);
+          showToast(`⛔ مرفوض: ${person.name}`, "هذا المشارك لم يسجل دخول في بداية الندوة!", "error");
+          addRecentLog(person.name, "مرفوض: لم يسجل دخول مسبقاً", "error");
+          return;
+        }
+
+        if (person.outStatus) {
+          playFeedbackSound("warning");
+          triggerHapticFeedback([100, 50, 100]);
+          showToast(person.name, `مسجل خروج مسبقاً الساعة ${person.outTime}`, "warning");
+          addRecentLog(person.name, `تنبيه: خروج مكرر (${person.outTime})`, "warning");
+          return;
+        }
+
+        person.outStatus = true;
+        person.outTime = now;
+        person.outTimestamp = Date.now();
+        person.outOrganizer = org;
+        if (!person.organizer) person.organizer = org;
+        saveStateToStorage();
+        refreshAllUI();
+
+        playFeedbackSound("celebrate");
+        triggerHapticFeedback([80, 40, 140]);
+        flashScannerGreen();
+        triggerBrandConfetti();
+
+        showToast(
+          `🎓 مبروك يا ${person.name}!`,
+          "أتممت الندوة واستحققت الشهادة بنجاح",
+          "success"
+        );
+        addRecentLog(person.name, `خروج ناجح — مستحق للشهادة (${now})`, "success");
+      }
+    }
+
+    function handleQuickCodeSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById("quickCodeInput");
+      const val = input.value.trim();
+      if (!val) return;
+      processAttendanceRecord(val);
+      input.value = "";
+      input.focus();
+    }
+
+    function addRecentLog(title, statusText, type) {
+      recentLogs.unshift({ title, statusText, type, time: formatNowTime() });
+      if (recentLogs.length > 40) recentLogs.pop();
+      saveStateToStorage();
+      renderRecentLogs();
+    }
+
+    function renderRecentLogs() {
+      const container = document.getElementById("recentLogsList");
+      if (recentLogs.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">لم يتم تسجيل أي حركة بعد</p>`;
+        return;
+      }
+
+      container.innerHTML = recentLogs.map(log => {
+        const styles = {
+          success: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300",
+          warning: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300",
+          error: "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300"
+        };
+        return `
+          <div class="p-2.5 rounded-xl border ${styles[log.type] || styles.success} flex items-center justify-between gap-2 text-xs">
+            <div>
+              <div class="font-extrabold">${escapeHtml(log.title)}</div>
+              <div class="opacity-90">${escapeHtml(log.statusText)}</div>
+            </div>
+            <span class="text-[10px] font-bold opacity-75 shrink-0">${log.time}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 7. QR CAMERA SCANNER WITH ANIMATED LASER
+    // =========================================================================
+    function flashScannerGreen() {
+      const box = document.getElementById("scannerFrameBox");
+      if (!box) return;
+      box.classList.add("ring-4", "ring-emerald-500", "border-emerald-500");
+      setTimeout(() => box.classList.remove("ring-4", "ring-emerald-500", "border-emerald-500"), 650);
+    }
+
+    async function startQrScanner() {
+      const placeholder = document.getElementById("scannerPlaceholder");
+      const startBtn = document.getElementById("startCameraBtn");
+      const stopBtn = document.getElementById("stopCameraBtn");
+      const badge = document.getElementById("scannerActiveBadge");
+      const laser = document.getElementById("qrLaserLine");
+      const corners = document.getElementById("qrCornerBrackets");
+
+      try {
+        if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
+
+        const cameras = await Html5Qrcode.getCameras();
+        if (!cameras || cameras.length === 0) {
+          showToast("لم يتم العثور على كاميرا", "استخدم خانة الإدخال السريع بالكود أو قارئ USB.", "error");
+          return;
+        }
+
+        const selectWrap = document.getElementById("cameraSelectWrap");
+        const selectEl = document.getElementById("cameraSelect");
+        if (cameras.length > 1) {
+          selectWrap.classList.remove("hidden");
+          selectEl.innerHTML = cameras.map((cam, idx) =>
+            `<option value="${cam.id}">${cam.label || "كاميرا " + (idx + 1)}</option>`
+          ).join("");
+          const backCam = cameras.find(c => /back|rear|environment/i.test(c.label));
+          if (backCam) selectEl.value = backCam.id;
+        }
+
+        const cameraConfig = cameras.length > 1
+          ? { deviceId: { exact: selectEl.value } }
+          : { facingMode: "environment" };
+
+        placeholder.classList.add("hidden");
+
+        await html5QrCode.start(
+          cameraConfig,
+          { fps: 10, qrbox: { width: 230, height: 230 } },
+          (decodedText) => {
+            const now = Date.now();
+            if (decodedText === lastScannedCode && (now - lastScannedTime) < 2500) return;
+            lastScannedCode = decodedText;
+            lastScannedTime = now;
+            processAttendanceRecord(decodedText);
+          },
+          () => {}
+        );
+
+        isCameraRunning = true;
+        startBtn.classList.add("hidden");
+        stopBtn.classList.remove("hidden");
+        laser.classList.remove("hidden");
+        corners.classList.remove("hidden");
+        badge.innerText = "الكاميرا تعمل الآن";
+        badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700";
+      } catch (err) {
+        placeholder.classList.remove("hidden");
+        showToast("تعذر تشغيل الكاميرا", "تأكد من السماح للمتصفح بالكاميرا وفتح الموقع عبر رابط HTTPS.", "error");
+      }
+    }
+
+    async function stopQrScanner() {
+      if (html5QrCode && isCameraRunning) {
+        try { await html5QrCode.stop(); } catch (e) {}
+      }
+      isCameraRunning = false;
+      document.getElementById("scannerPlaceholder").classList.remove("hidden");
+      document.getElementById("startCameraBtn").classList.remove("hidden");
+      document.getElementById("stopCameraBtn").classList.add("hidden");
+      document.getElementById("qrLaserLine").classList.add("hidden");
+      document.getElementById("qrCornerBrackets").classList.add("hidden");
+
+      const badge = document.getElementById("scannerActiveBadge");
+      badge.innerText = "الكاميرا متوقفة";
+      badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+    }
+
+    // =========================================================================
+    // 8. FUZZY ARABIC SEARCH (TOP 40 FOR 60FPS) & WALK-IN REGISTRATION
+    // =========================================================================
+    function setStatusFilter(filter) {
+      currentStatusFilter = filter;
+      ["ALL", "IN_ONLY", "ELIGIBLE", "ABSENT"].forEach(p => {
+        const el = document.getElementById(`filterPill-${p}`);
+        el.className = p === filter
+          ? "filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-brandNavy text-white"
+          : "filter-pill px-3 py-1.5 rounded-lg text-xs font-extrabold cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
+      });
+      renderAttendeesList();
+    }
+
+    function renderAttendeesList() {
+      const container = document.getElementById("attendeesListContainer");
+      const notice = document.getElementById("searchLimitNotice");
+      const qNorm = normalizeArabic(document.getElementById("searchInput").value);
+
+      const matches = [];
+      for (let i = 0; i < attendees.length; i++) {
+        const a = attendees[i];
+        if (qNorm && !a._normSearch.includes(qNorm)) continue;
+
+        if (currentStatusFilter === "IN_ONLY" && !(a.inStatus && !a.outStatus)) continue;
+        if (currentStatusFilter === "ELIGIBLE" && !(a.inStatus && a.outStatus)) continue;
+        if (currentStatusFilter === "ABSENT" && a.inStatus) continue;
+
+        matches.push(a);
+      }
+
+      if (matches.length === 0) {
+        notice.classList.add("hidden");
+        container.innerHTML = `
+          <div class="text-center py-12 bg-brandBg dark:bg-brandMidnight rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <i class="fa-solid fa-users-slash text-3xl text-slate-400 mb-2"></i>
+            <p class="text-sm font-bold text-slate-600 dark:text-slate-300">لا توجد نتائج مطابقة للبحث</p>
+            <p class="text-xs text-slate-400 mt-1">يمكنك إضافة مشارك جديد من النموذج الجانبي أو استيراد قائمة المسجلين</p>
+          </div>
+        `;
+        return;
+      }
+
+      notice.classList.toggle("hidden", matches.length <= 40);
+
+      // Render top 40 matches for instant 60fps performance even with 5,000+ records
+      container.innerHTML = matches.slice(0, 40).map(person => {
+        let statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">لم يحضر بعد</span>`;
+        if (person.inStatus && person.outStatus) {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300">مكتمل (دخول + خروج) 🎓</span>`;
+        } else if (person.inStatus) {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300">حاضر داخل القاعة (${person.inTime})</span>`;
+        }
+
+        const actionBtnClass = currentMode === "IN"
+          ? "bg-brandNavy hover:bg-brandNavyLight text-white"
+          : "bg-brandOrange hover:bg-brandOrangeHover text-white";
+        const actionBtnLabel = currentMode === "IN" ? "تسجيل دخول" : "تسجيل خروج";
+
+        return `
+          <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-brandOrange bg-white dark:bg-brandMidnight flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <h4 class="font-extrabold text-sm sm:text-base text-brandNavy dark:text-white">${escapeHtml(person.name)}</h4>
+                ${statusBadge}
+              </div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap gap-x-3 gap-y-1">
+                <span><strong class="text-brandNavy dark:text-slate-200">الكود:</strong> ${escapeHtml(person.id)}</span>
+                ${person.phone ? `<span><strong class="text-brandNavy dark:text-slate-200">الهاتف:</strong> ${escapeHtml(person.phone)}</span>` : ""}
+                ${person.inTime ? `<span class="text-blue-600 dark:text-blue-400">دخول: ${person.inTime}</span>` : ""}
+                ${person.outTime ? `<span class="text-emerald-600 dark:text-emerald-400">خروج: ${person.outTime}</span>` : ""}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+              <button onclick="openTicketModal('${escapeAttr(person.id)}')" title="عرض التذكرة"
+                class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-brandNavy dark:text-white transition cursor-pointer">
+                <i class="fa-solid fa-qrcode"></i>
+              </button>
+              <button onclick="processAttendanceRecord('${escapeAttr(person.id)}')"
+                class="${actionBtnClass} text-xs font-extrabold py-2.5 px-4 rounded-xl shadow-xs transition cursor-pointer">
+                ${actionBtnLabel}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function handleWalkInSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById("walkInName").value.trim();
+      let id = document.getElementById("walkInId").value.trim();
+      const phone = normalizeEgyptianPhone(document.getElementById("walkInPhone").value);
+
+      if (!name) return;
+      if (!id) id = "SQ-" + (1000 + attendees.length + Math.floor(Math.random() * 900));
+
+      if (idIndexMap.has(normalizeArabic(id))) {
+        showToast("الكود مستخدم مسبقاً", `يوجد مشارك مسجل بالفعل بالكود (${id})`, "error");
+        return;
+      }
+
+      const now = formatNowTime();
+      const org = getOrganizerName();
+
+      attendees.unshift({
+        id,
+        name,
+        email: "",
+        phone,
+        inStatus: true,
+        inTime: now,
+        inTimestamp: Date.now(),
+        inOrganizer: org,
+        outStatus: false,
+        outTime: "",
+        outTimestamp: 0,
+        outOrganizer: "",
+        organizer: org
+      });
+
+      rebuildLookupIndexes();
+      saveStateToStorage();
+      refreshAllUI();
+      playFeedbackSound("checkin");
+      triggerHapticFeedback([65]);
+      showToast(`✅ ${name}`, `تمت الإضافة وتسجيل الدخول فوراً بالكود (${id})`, "success");
+      addRecentLog(name, `تسجيل فوري + دخول بواسطة ${org} (${now})`, "success");
+
+      document.getElementById("walkInName").value = "";
+      document.getElementById("walkInId").value = "";
+      document.getElementById("walkInPhone").value = "";
+    }
+
+    // =========================================================================
+    // 9. ORGANIZERS LEADERBOARD
+    // =========================================================================
+    function renderOrganizersLeaderboard() {
+      const container = document.getElementById("organizersLeaderboard");
+      const counts = {};
+
+      attendees.forEach(a => {
+        if (a.inStatus) {
+          const orgIn = (a.inOrganizer || a.organizer || "منظم").trim();
+          counts[orgIn] = (counts[orgIn] || 0) + 1;
+        }
+        if (a.outStatus) {
+          const orgOut = (a.outOrganizer || a.organizer || "منظم").trim();
+          counts[orgOut] = (counts[orgOut] || 0) + 1;
+        }
+      });
+
+      const ranked = Object.entries(counts)
+        .map(([name, score]) => ({ name, score }))
+        .sort((a, b) => b.score - a.score);
+
+      if (ranked.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ستظهر إحصائيات المنظمين تلقائياً مع بدء التسجيل</p>`;
+        return;
+      }
+
+      const medals = ["🥇", "🥈", "🥉"];
+      container.innerHTML = ranked.map((item, idx) => {
+        const medal = medals[idx] || `#${idx + 1}`;
+        const isTop = idx === 0;
+        return `
+          <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl border ${isTop ? 'bg-orange-50 dark:bg-brandOrange/15 border-brandOrange/50' : 'bg-brandBg dark:bg-brandMidnight border-slate-200 dark:border-slate-700'} text-xs sm:text-sm">
+            <div class="flex items-center gap-2.5 font-extrabold text-brandNavy dark:text-white">
+              <span class="text-lg">${medal}</span>
+              <span>${escapeHtml(item.name)}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-brandNavy text-white text-xs font-black">
+              ${item.score} حركة
+            </span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 10. ADMIN: EXCEL/CSV IMPORT, VIP TICKETS (PAGINATED) & WHATSAPP
+    // =========================================================================
+    function handleExcelImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+          if (rows.length === 0) {
+            showToast("ملف فارغ", "لم يتم العثور على بيانات داخل الملف.", "warning");
+            return;
+          }
+
+          let addedCount = 0;
+          let skippedCount = 0;
+
+          rows.forEach(row => {
+            const keys = Object.keys(row);
+            const findVal = (patterns) => {
+              const matchedKey = keys.find(k => patterns.some(p => k.trim().toLowerCase().includes(p)));
+              return matchedKey ? String(row[matchedKey]).trim() : "";
+            };
+
+            let name = findVal(["الاسم", "اسم", "name", "full"]);
+            let id = findVal(["الكود", "كود", "الرقم", "id", "code", "student"]);
+            let email = findVal(["البريد", "ايميل", "إيميل", "email", "mail"]);
+            let phone = findVal(["الهاتف", "هاتف", "موبايل", "الموبايل", "تليفون", "phone", "mobile", "tel"]);
+
+            if (!name && keys.length >= 2) {
+              id = String(row[keys[0]]).trim();
+              name = String(row[keys[1]]).trim();
+              if (keys[2]) email = String(row[keys[2]]).trim();
+              if (keys[3]) phone = String(row[keys[3]]).trim();
+            } else if (!name && keys.length === 1) {
+              name = String(row[keys[0]]).trim();
+            }
+
+            if (!name) return;
+            if (!id) id = "SQ-" + String(attendees.length + addedCount + 1001);
+
+            const normId = normalizeArabic(id);
+            if (idIndexMap.has(normId)) {
+              skippedCount++;
+              return;
+            }
+
+            const newPerson = {
+              id,
+              name,
+              email,
+              phone: normalizeEgyptianPhone(phone),
+              inStatus: false,
+              inTime: "",
+              inTimestamp: 0,
+              inOrganizer: "",
+              outStatus: false,
+              outTime: "",
+              outTimestamp: 0,
+              outOrganizer: "",
+              organizer: ""
+            };
+            attendees.push(newPerson);
+            idIndexMap.set(normId, newPerson);
+            addedCount++;
+          });
+
+          rebuildLookupIndexes();
+          saveStateToStorage();
+          refreshAllUI();
+          playFeedbackSound("checkin");
+          showToast(
+            `تم استيراد ${addedCount} مشارك بنجاح`,
+            skippedCount > 0 ? `تم تجاهل ${skippedCount} سجل مكرر تلقائياً.` : "جميع التذاكر وأكواد QR جاهزة الآن.",
+            "success"
+          );
+        } catch (err) {
+          console.error(err);
+          showToast("خطأ في قراءة الملف", "تأكد أن الملف بصيغة Excel (.xlsx) أو CSV صالحة.", "error");
+        }
+        event.target.value = "";
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function downloadExcelTemplate() {
+      const templateData = [
+        {
+          "الكود (ID)": "SQ-1001",
+          "الاسم الكامل (للشهادة)": "أحمد محمد عبد الرحمن",
+          "البريد الإلكتروني": "ahmed@sphinx.edu.eg",
+          "رقم الهاتف": "01012345678"
+        },
+        {
+          "الكود (ID)": "SQ-1002",
+          "الاسم الكامل (للشهادة)": "سارة محمود إبراهيم حسن",
+          "البريد الإلكتروني": "sara@sphinx.edu.eg",
+          "رقم الهاتف": "01123456789"
+        }
+      ];
+      const ws = XLSX.utils.json_to_sheet(templateData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "المسجلون");
+      XLSX.writeFile(wb, "نموذج_أسماء_يوم_الجودة_الجامعي.xlsx");
+    }
+
+    function loadDemoData() {
+      const demoList = [
+        { id: "SQ-1001", name: "أحمد محمد عبد الرحمن علي", email: "ahmed.ali@sphinx.edu.eg", phone: "01011223344", inStatus: true, inTime: "10:02:15 ص", inTimestamp: 1, inOrganizer: "أحمد - بوابة 1", outStatus: true, outTime: "01:45:10 م", outTimestamp: 2, outOrganizer: "أحمد - بوابة 1", organizer: "أحمد - بوابة 1" },
+        { id: "SQ-1002", name: "مريم طارق محمود السيد", email: "mariam.tarek@sphinx.edu.eg", phone: "01122334455", inStatus: true, inTime: "10:05:40 ص", inTimestamp: 1, inOrganizer: "سارة - بوابة 2", outStatus: true, outTime: "01:46:22 م", outTimestamp: 2, outOrganizer: "سارة - بوابة 2", organizer: "سارة - بوابة 2" },
+        { id: "SQ-1003", name: "عمر خالد إبراهيم حسن", email: "omar.khaled@sphinx.edu.eg", phone: "01233445566", inStatus: true, inTime: "10:12:08 ص", inTimestamp: 1, inOrganizer: "أحمد - بوابة 1", outStatus: false, outTime: "", outTimestamp: 0, outOrganizer: "", organizer: "أحمد - بوابة 1" },
+        { id: "SQ-1004", name: "نورهان سامي فتحي محمد", email: "nourhan.samy@sphinx.edu.eg", phone: "01544556677", inStatus: false, inTime: "", inTimestamp: 0, inOrganizer: "", outStatus: false, outTime: "", outTimestamp: 0, outOrganizer: "", organizer: "" },
+        { id: "SQ-1005", name: "يوسف هاني مصطفى كامل", email: "youssef.hany@sphinx.edu.eg", phone: "01099887766", inStatus: true, inTime: "10:15:30 ص", inTimestamp: 1, inOrganizer: "كريم - بوابة 3", outStatus: true, outTime: "01:50:05 م", outTimestamp: 2, outOrganizer: "أحمد - بوابة 1", organizer: "كريم - بوابة 3" },
+        { id: "SQ-1006", name: "هاجر أشرف عبد الله صالح", email: "hagar.ashraf@sphinx.edu.eg", phone: "01188776655", inStatus: false, inTime: "", inTimestamp: 0, inOrganizer: "", outStatus: false, outTime: "", outTimestamp: 0, outOrganizer: "", organizer: "" }
+      ];
+
+      demoList.forEach(item => {
+        if (!idIndexMap.has(normalizeArabic(item.id))) {
+          attendees.push(item);
+        }
+      });
+
+      rebuildLookupIndexes();
+      saveStateToStorage();
+      refreshAllUI();
+      playFeedbackSound("checkin");
+      showToast("تم تحميل البيانات التجريبية", "يمكنك الآن تجربة المسح وتذاكر VIP واستخراج الشهادات.", "success");
+    }
+
+    function resetTicketPaginationAndRender() {
+      ticketsVisibleLimit = 30;
+      renderVipTicketsGrid();
+    }
+
+    function loadMoreTickets() {
+      ticketsVisibleLimit += 30;
+      renderVipTicketsGrid();
+    }
+
+    function renderVipTicketsGrid() {
+      const container = document.getElementById("vipTicketsGrid");
+      const loadMoreWrap = document.getElementById("loadMoreTicketsWrap");
+      const qNorm = normalizeArabic(document.getElementById("ticketSearchInput")?.value || "");
+      const eventTitle = appSettings.eventTitle || "يوم الجودة الجامعي";
+
+      const filtered = qNorm
+        ? attendees.filter(a => a._normSearch.includes(qNorm))
+        : attendees;
+
+      if (filtered.length === 0) {
+        loadMoreWrap.classList.add("hidden");
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white dark:bg-brandCardDark rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <i class="fa-solid fa-ticket text-4xl text-slate-300 mb-2"></i>
+            <p class="text-sm font-bold text-slate-600 dark:text-slate-300">لا توجد تذاكر VIP لعرضها حالياً</p>
+            <p class="text-xs text-slate-400 mt-1">ارفع ملف Excel بالأسماء أو اضغط على "بيانات تجريبية" بالأعلى</p>
+          </div>
+        `;
+        return;
+      }
+
+      const slice = filtered.slice(0, ticketsVisibleLimit);
+      loadMoreWrap.classList.toggle("hidden", filtered.length <= ticketsVisibleLimit);
+
+      container.innerHTML = slice.map((person, idx) => {
+        const globalIndex = attendees.indexOf(person);
+        const serial = "#" + String((globalIndex >= 0 ? globalIndex : idx) + 1).padStart(3, "0");
+        const waUrl = getWhatsAppUrl(person);
+
+        return `
+          <div class="bg-white text-brandNavy rounded-2xl border-2 border-brandNavy shadow-sm p-4 flex flex-col items-center text-center relative overflow-hidden">
+            <div class="w-full h-2 bg-gradient-to-l from-brandNavy via-brandOrange to-brandNavy -mx-4 -mt-4 mb-2.5"></div>
+
+            <div class="w-full flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-black bg-brandNavy text-white px-2 py-0.5 rounded-md">VIP ${serial}</span>
+              <span class="text-[10px] font-extrabold text-brandOrange">${escapeHtml(eventTitle)}</span>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 my-1">
+              <div class="w-10 h-10">${getQacLogoSvg("t-qac-" + idx)}</div>
+              <div class="h-6 w-[1px] bg-slate-200"></div>
+              <div class="w-10 h-10">${getFoqLogoSvg()}</div>
+            </div>
+
+            <h4 class="font-extrabold text-sm text-brandNavy line-clamp-1 mt-1">${escapeHtml(person.name)}</h4>
+            <span class="text-xs font-bold text-brandOrange mt-0.5">${escapeHtml(person.id)}</span>
+            ${person.phone ? `<span class="text-[11px] font-semibold text-slate-500 mt-0.5">${escapeHtml(person.phone)}</span>` : ""}
+
+            <div id="grid-qr-${idx}" class="p-2 bg-brandBg rounded-xl border border-slate-200 my-2"></div>
+
+            <div class="w-full grid ${waUrl ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-1">
+              <button onclick="downloadTicketPng('${escapeAttr(person.id)}')"
+                class="bg-brandNavy hover:bg-brandNavyLight text-white text-xs font-bold py-2 px-2.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-download text-brandOrange"></i>
+                <span>تحميل PNG</span>
+              </button>
+              ${waUrl ? `
+                <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+                  class="bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-extrabold py-2 px-2.5 rounded-xl transition flex items-center justify-center gap-1.5">
+                  <i class="fa-brands fa-whatsapp text-sm"></i>
+                  <span>واتساب</span>
+                </a>
+              ` : ""}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      slice.forEach((person, idx) => {
+        const qrEl = document.getElementById(`grid-qr-${idx}`);
+        if (qrEl) {
+          qrEl.innerHTML = "";
+          new QRCode(qrEl, {
+            text: String(person.id),
+            width: 110,
+            height: 110,
+            colorDark: "#03254C",
+            colorLight: "#FFFFFF",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      });
+    }
+
+    function openTicketModal(personId) {
+      const idx = attendees.findIndex(a => String(a.id) === String(personId));
+      if (idx === -1) return;
+      const person = attendees[idx];
+      const serial = "#" + String(idx + 1).padStart(3, "0");
+
+      document.getElementById("modalSerialBadge").innerText = `VIP PASS ${serial}`;
+      document.getElementById("modalTicketLogoQac").innerHTML = getQacLogoSvg("modal-qac");
+      document.getElementById("modalTicketLogoFoq").innerHTML = getFoqLogoSvg();
+      document.getElementById("modalTicketEventTitle").innerText = appSettings.eventTitle || "يوم الجودة الجامعي";
+      document.getElementById("modalAttendeeName").innerText = person.name;
+      document.getElementById("modalAttendeeId").innerText = `الكود التعريفي: ${person.id}`;
+
+      const qrContainer = document.getElementById("modalQrContainer");
+      qrContainer.innerHTML = "";
+      new QRCode(qrContainer, {
+        text: String(person.id),
+        width: 155,
+        height: 155,
+        colorDark: "#03254C",
+        colorLight: "#FFFFFF",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const statusText = (person.inStatus && person.outStatus)
+        ? `مكتمل الحضور (دخول: ${person.inTime} | خروج: ${person.outTime})`
+        : (person.inStatus ? `مسجل دخول الساعة ${person.inTime}` : "لم يسجل دخول بعد");
+      document.getElementById("modalStatusSummary").innerText = statusText;
+
+      document.getElementById("modalDownloadPngBtn").onclick = () => downloadTicketPng(person.id);
+
+      const waBtn = document.getElementById("modalWhatsappBtn");
+      const waUrl = getWhatsAppUrl(person);
+      if (waUrl) {
+        waBtn.href = waUrl;
+        waBtn.classList.remove("hidden");
+      } else {
+        waBtn.classList.add("hidden");
+      }
+
+      const modal = document.getElementById("ticketModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeTicketModal() {
+      const modal = document.getElementById("ticketModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // Draw Vector Emblems Directly onto Canvas for High-Resolution PNG VIP Ticket
+    function drawCanvasEmblems(ctx) {
+      // Left Badge Circle (Friends of Quality Gear Emblem)
+      ctx.save();
+      ctx.translate(105, 80);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.arc(0, 0, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#F37021";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = "#F37021";
+      ctx.beginPath();
+      ctx.arc(0, -6, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#03254C";
+      ctx.beginPath();
+      ctx.arc(0, -6, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-4, -6);
+      ctx.lineTo(-1, -3);
+      ctx.lineTo(5, -9);
+      ctx.stroke();
+
+      ctx.fillStyle = "#03254C";
+      ctx.fillRect(-18, 16, 36, 7);
+      ctx.restore();
+
+      // Right Badge Circle (Quality Assurance Center Shield Emblem)
+      ctx.save();
+      ctx.translate(515, 80);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.arc(0, 0, 42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#F37021";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.strokeStyle = "#F37021";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -24);
+      ctx.lineTo(20, -16);
+      ctx.lineTo(20, 4);
+      ctx.quadraticCurveTo(20, 20, 0, 27);
+      ctx.quadraticCurveTo(-20, 20, -20, 4);
+      ctx.lineTo(-20, -16);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.fillStyle = "#1E242B";
+      ctx.beginPath();
+      ctx.moveTo(-12, 12);
+      ctx.lineTo(-7, -10);
+      ctx.lineTo(7, -10);
+      ctx.lineTo(12, 12);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function downloadTicketPng(personId) {
+      const idx = attendees.findIndex(a => String(a.id) === String(personId));
+      if (idx === -1) return;
+      const person = attendees[idx];
+      const serial = "#" + String(idx + 1).padStart(3, "0");
+      const eventTitle = appSettings.eventTitle || "يوم الجودة الجامعي";
+
+      const tempDiv = document.createElement("div");
+      new QRCode(tempDiv, {
+        text: String(person.id),
+        width: 240,
+        height: 240,
+        colorDark: "#03254C",
+        colorLight: "#FFFFFF",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      setTimeout(() => {
+        const qrCanvas = tempDiv.querySelector("canvas");
+        if (!qrCanvas) return;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = 620;
+        canvas.height = 800;
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, 620, 800);
+
+        ctx.strokeStyle = "#03254C";
+        ctx.lineWidth = 12;
+        ctx.strokeRect(12, 12, 596, 776);
+
+        ctx.fillStyle = "#03254C";
+        ctx.fillRect(12, 12, 596, 142);
+        ctx.fillStyle = "#F37021";
+        ctx.fillRect(12, 154, 596, 12);
+
+        drawCanvasEmblems(ctx);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 20px Cairo, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("مركز ضمان الجودة × أصدقاء الجودة", 310, 66);
+
+        ctx.fillStyle = "#F37021";
+        ctx.font = "bold 15px Cinzel, serif";
+        ctx.fillText("SPHINX UNIVERSITY", 310, 96);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 15px Cairo, sans-serif";
+        ctx.fillText(`VIP PASS ${serial}`, 310, 128);
+
+        ctx.fillStyle = "#03254C";
+        ctx.font = "bold 29px Cairo, sans-serif";
+        ctx.fillText(eventTitle, 310, 214);
+
+        ctx.fillStyle = "#F4F7FA";
+        ctx.fillRect(170, 240, 280, 280);
+        ctx.strokeStyle = "#CBD5E1";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(170, 240, 280, 280);
+        ctx.drawImage(qrCanvas, 190, 260, 240, 240);
+
+        ctx.fillStyle = "#03254C";
+        ctx.font = "bold 27px Cairo, sans-serif";
+        ctx.fillText(person.name, 310, 578);
+
+        ctx.fillStyle = "#F37021";
+        ctx.font = "bold 23px Cairo, sans-serif";
+        ctx.fillText(`ID: ${person.id}`, 310, 622);
+
+        ctx.fillStyle = "#64748B";
+        ctx.font = "16px Cairo, sans-serif";
+        ctx.fillText("يرجى إبراز التذكرة عند الدخول وعند الخروج لاستحقاق الشهادة", 310, 678);
+
+        ctx.fillStyle = "#03254C";
+        ctx.font = "bold 15px Cairo, sans-serif";
+        ctx.fillText("مدير مركز ضمان الجودة: أ.د/ غادة عبدالرحمن", 310, 722);
+
+        ctx.fillStyle = "#F37021";
+        ctx.font = "bold 13px Cairo, sans-serif";
+        ctx.fillText("Designed & Developed by Islam Jaheen", 310, 754);
+
+        const link = document.createElement("a");
+        link.download = `VIP_${serial}_${person.id}_${person.name.replace(/\s+/g, "_")}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }, 70);
+    }
+
+    function printAllTicketsA4() {
+      if (attendees.length === 0) {
+        showToast("القائمة فارغة", "لا توجد تذاكر لطباعتها حالياً.", "warning");
+        return;
+      }
+
+      const printSheet = document.getElementById("printable-print-sheet");
+      const eventTitle = appSettings.eventTitle || "يوم الجودة الجامعي";
+      const batch = attendees.slice(0, 300); // Safe A4 print batch limit
+
+      printSheet.innerHTML = batch.map((person, idx) => {
+        const serial = "#" + String(idx + 1).padStart(3, "0");
+        return `
+          <div class="print-ticket-card rounded-xl p-3 text-center">
+            <div class="flex items-center justify-between text-[10px] font-black mb-1">
+              <span>VIP ${serial}</span>
+              <span style="color:#F37021">${escapeHtml(eventTitle)}</span>
+            </div>
+            <div class="flex items-center justify-center gap-2 my-1">
+              <div class="w-9 h-9">${getQacLogoSvg("pq-" + idx)}</div>
+              <div class="w-9 h-9">${getFoqLogoSvg()}</div>
+            </div>
+            <div class="font-extrabold text-xs mt-1">${escapeHtml(person.name)}</div>
+            <div class="text-[11px] font-bold" style="color:#F37021">${escapeHtml(person.id)}</div>
+            <div id="print-qr-${idx}" class="flex justify-center my-1.5"></div>
+          </div>
+        `;
+      }).join("");
+
+      batch.forEach((person, idx) => {
+        const el = document.getElementById(`print-qr-${idx}`);
+        if (el) {
+          new QRCode(el, {
+            text: String(person.id),
+            width: 90,
+            height: 90,
+            colorDark: "#03254C",
+            colorLight: "#FFFFFF",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      });
+
+      setTimeout(() => {
+        window.print();
+        printSheet.innerHTML = "";
+      }, 250);
+    }
+
+    // =========================================================================
+    // 11. ADMIN: CERTIFICATES EXPORT & MULTI-DEVICE JSON MERGE
+    // =========================================================================
+    function getEligibleAttendees() {
+      return attendees.filter(a => a.inStatus && a.outStatus);
+    }
+
+    function renderEligibleTable() {
+      const tbody = document.getElementById("eligibleTableBody");
+      const eligible = getEligibleAttendees();
+
+      if (eligible.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-10 text-slate-400 font-bold">
+              لا يوجد مشاركون أتموا تسجيل الدخول والخروج معاً حتى الآن
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = eligible.map((p, index) => `
+        <tr class="hover:bg-orange-50/40 dark:hover:bg-brandOrange/10 transition">
+          <td class="py-3 px-3 font-bold text-slate-500">${index + 1}</td>
+          <td class="py-3 px-3 font-extrabold text-brandOrange">${escapeHtml(p.id)}</td>
+          <td class="py-3 px-3 font-extrabold text-brandNavy dark:text-white">${escapeHtml(p.name)}</td>
+          <td class="py-3 px-3 text-slate-600 dark:text-slate-300">${escapeHtml(p.phone || "-")}</td>
+          <td class="py-3 px-3 text-blue-700 dark:text-blue-400 font-semibold">${escapeHtml(p.inTime)}</td>
+          <td class="py-3 px-3 text-emerald-700 dark:text-emerald-400 font-semibold">${escapeHtml(p.outTime)}</td>
+          <td class="py-3 px-3 text-slate-500 dark:text-slate-400 text-xs">${escapeHtml(p.outOrganizer || p.organizer || "-")}</td>
+        </tr>
+      `).join("");
+    }
+
+    function exportEligibleExcel() {
+      const eligible = getEligibleAttendees();
+      if (eligible.length === 0) {
+        showToast("القائمة فارغة", "لا يوجد مستحقون للشهادات لتصديرهم حالياً.", "warning");
+        return;
+      }
+
+      const exportRows = eligible.map((p, idx) => ({
+        "م": idx + 1,
+        "الكود (ID)": p.id,
+        "الاسم الكامل المستحق للشهادة": p.name,
+        "البريد الإلكتروني": p.email || "",
+        "رقم الهاتف": p.phone || "",
+        "وقت الدخول": p.inTime,
+        "وقت الخروج": p.outTime,
+        "المنظم": p.outOrganizer || p.organizer || ""
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "المستحقون_للشهادات");
+      XLSX.writeFile(wb, `المستحقون_للشهادات_${(appSettings.eventTitle || "يوم_الجودة_الجامعي").replace(/\s+/g, "_")}.xlsx`);
+      showToast("تم التصدير بنجاح", `تم تحميل ملف Excel يضم ${eligible.length} اسم مستحق للشهادة.`, "success");
+    }
+
+    function exportEligibleCSV() {
+      const eligible = getEligibleAttendees();
+      if (eligible.length === 0) {
+        showToast("القائمة فارغة", "لا يوجد مستحقون للشهادات لتصديرهم حالياً.", "warning");
+        return;
+      }
+
+      // UTF-8 BOM ensures Arabic renders cleanly in Microsoft Excel
+      let csvContent = "\uFEFFالكود,الاسم الكامل المستحق للشهادة,البريد الإلكتروني,رقم الهاتف,وقت الدخول,وقت الخروج\n";
+      eligible.forEach(p => {
+        csvContent += `"${p.id}","${p.name}","${p.email || ""}","${p.phone || ""}","${p.inTime}","${p.outTime}"\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `المستحقون_للشهادات_${(appSettings.eventTitle || "يوم_الجودة_الجامعي").replace(/\s+/g, "_")}.csv`;
+      link.click();
+    }
+
+    function copyEligibleNamesOnly() {
+      const eligible = getEligibleAttendees();
+      if (eligible.length === 0) {
+        showToast("القائمة فارغة", "لا توجد أسماء مستحقة لنسخها حالياً.", "warning");
+        return;
+      }
+
+      const namesText = eligible.map(p => p.name).join("\n");
+      const textarea = document.createElement("textarea");
+      textarea.value = namesText;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand("copy");
+        playFeedbackSound("checkin");
+        showToast("تم النسخ للحافظة", `تم نسخ ${eligible.length} اسم جاهز للصق في برنامج تصميم الشهادات.`, "success");
+      } catch (e) {
+        showToast("تعذر النسخ", "يرجى استخدام زر تحميل Excel أو CSV.", "error");
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+
+    // Export Device Log JSON (Used by Organizers)
+    function exportDeviceJson() {
+      const cleanList = attendees.map(({ _normSearch, ...rest }) => rest);
+      const payload = {
+        system: "Sphinx University - Quality Assurance Center & Friends of Quality",
+        event: appSettings.eventTitle,
+        developer: "Islam Jaheen",
+        exportedAt: new Date().toISOString(),
+        organizer: getOrganizerName(),
+        attendees: cleanList
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const safeOrg = getOrganizerName().replace(/\s+/g, "_");
+      link.download = `سجل_المنظم_${safeOrg}_${Date.now()}.json`;
+      link.click();
+      showToast("تم حفظ سجل هذا الجهاز", "أرسل هذا الملف للمشرف العام لدمجه مع باقي الأجهزة.", "success");
+    }
+
+    // Export Clean Roster JSON for Organizers (Used by Admin)
+    function exportOrganizerRosterJson() {
+      const cleanList = attendees.map(({ _normSearch, ...rest }) => rest);
+      const payload = {
+        system: "Sphinx University - Quality Assurance Center & Friends of Quality",
+        event: appSettings.eventTitle,
+        exportedAt: new Date().toISOString(),
+        attendees: cleanList
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `قائمة_تجهيز_المنظمين_${(appSettings.eventTitle || "يوم_الجودة_الجامعي").replace(/\s+/g, "_")}.json`;
+      link.click();
+      showToast("تم تصدير ملف التجهيز", "وزّع هذا الملف على المنظمين ليقوموا باستيراده على هواتفهم.", "success");
+    }
+
+    // Multi-File JSON Smart Merge (Earliest Check-in, Latest Check-out, Walk-in Deduplication)
+    function handleMergeJson(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      let filesProcessed = 0;
+      let totalUpdated = 0;
+      let totalAdded = 0;
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            const incomingList = Array.isArray(parsed) ? parsed : (parsed.attendees || []);
+
+            if (Array.isArray(incomingList)) {
+              incomingList.forEach(inc => {
+                if (!inc.name && !inc.id) return;
+                const incIn = inc.inStatus === true || inc.inStatus === "تم";
+                const incOut = inc.outStatus === true || inc.outStatus === "تم";
+
+                const existing = findAttendeeFast(inc.id) ||
+                  attendees.find(a => normalizeArabic(a.name) === normalizeArabic(inc.name));
+
+                if (existing) {
+                  let changed = false;
+                  if (incIn) {
+                    if (!existing.inStatus) {
+                      existing.inStatus = true;
+                      existing.inTime = inc.inTime || formatNowTime();
+                      existing.inTimestamp = inc.inTimestamp || Date.now();
+                      existing.inOrganizer = inc.inOrganizer || inc.organizer || "";
+                      changed = true;
+                    } else if (inc.inTimestamp && existing.inTimestamp && inc.inTimestamp < existing.inTimestamp) {
+                      // Keep earliest check-in timestamp
+                      existing.inTime = inc.inTime;
+                      existing.inTimestamp = inc.inTimestamp;
+                      existing.inOrganizer = inc.inOrganizer || existing.inOrganizer;
+                      changed = true;
+                    }
+                  }
+
+                  if (incOut) {
+                    if (!existing.outStatus) {
+                      existing.outStatus = true;
+                      existing.outTime = inc.outTime || formatNowTime();
+                      existing.outTimestamp = inc.outTimestamp || Date.now();
+                      existing.outOrganizer = inc.outOrganizer || inc.organizer || "";
+                      changed = true;
+                    } else if (inc.outTimestamp && existing.outTimestamp && inc.outTimestamp > existing.outTimestamp) {
+                      // Keep latest check-out timestamp
+                      existing.outTime = inc.outTime;
+                      existing.outTimestamp = inc.outTimestamp;
+                      existing.outOrganizer = inc.outOrganizer || existing.outOrganizer;
+                      changed = true;
+                    }
+                  }
+
+                  if (inc.phone && !existing.phone) existing.phone = normalizeEgyptianPhone(inc.phone);
+                  if (inc.email && !existing.email) existing.email = inc.email;
+                  if (changed) totalUpdated++;
+                } else {
+                  const newObj = {
+                    id: inc.id || ("SQ-" + Math.floor(1000 + Math.random() * 9000)),
+                    name: inc.name || "مشارك",
+                    email: inc.email || "",
+                    phone: normalizeEgyptianPhone(inc.phone || ""),
+                    inStatus: incIn,
+                    inTime: inc.inTime || "",
+                    inTimestamp: inc.inTimestamp || 0,
+                    inOrganizer: inc.inOrganizer || "",
+                    outStatus: incOut,
+                    outTime: inc.outTime || "",
+                    outTimestamp: inc.outTimestamp || 0,
+                    outOrganizer: inc.outOrganizer || "",
+                    organizer: inc.organizer || ""
+                  };
+                  attendees.push(newObj);
+                  idIndexMap.set(normalizeArabic(newObj.id), newObj);
+                  totalAdded++;
+                }
+              });
+            }
+          } catch (err) {
+            console.error("JSON merge error:", err);
+          } finally {
+            filesProcessed++;
+            if (filesProcessed === files.length) {
+              rebuildLookupIndexes();
+              saveStateToStorage();
+              refreshAllUI();
+              playFeedbackSound("celebrate");
+              triggerBrandConfetti();
+              showToast(
+                `تم دمج ${files.length} ملف بنجاح 🎉`,
+                `تم تحديث ${totalUpdated} سجل وإضافة ${totalAdded} مشارك جديد بدون تكرار.`,
+                "success"
+              );
+            }
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      event.target.value = "";
+    }
+
+    // =========================================================================
+    // 12. ADMIN SETTINGS, COMPRESSED LOGO UPLOAD & DOUBLE-CONFIRMATION RESET
+    // =========================================================================
+    function applySettingsToUI() {
+      const title = appSettings.eventTitle || "يوم الجودة الجامعي";
+      document.getElementById("headerEventTitle").innerText = title;
+      document.getElementById("splashEventTitle").innerText = title;
+      document.getElementById("settingsEventTitleInput").value = title;
+      updateDynamicGreeting();
+    }
+
+    function handleLogoFileUpload(event, target) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          // Compress & downscale image to max 256px so localStorage stays lightweight
+          const maxDim = 256;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const compressedDataUrl = canvas.toDataURL("image/png");
+          if (target === "qac") appSettings.customQacLogo = compressedDataUrl;
+          if (target === "foq") appSettings.customFoqLogo = compressedDataUrl;
+
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+          renderAllBrandLogos();
+          renderVipTicketsGrid();
+          showToast("تم تحديث الشعار", "تم اعتماد الصورة بنجاح في الهيدر والتذاكر.", "success");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveEventSettings() {
+      const newTitle = document.getElementById("settingsEventTitleInput").value.trim();
+      if (newTitle) appSettings.eventTitle = newTitle;
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+      applySettingsToUI();
+      renderVipTicketsGrid();
+      showToast("تم حفظ الإعدادات", `تم تحديث اسم الفعالية إلى: ${appSettings.eventTitle}`, "success");
+    }
+
+    function resetCustomLogos() {
+      appSettings.customQacLogo = "";
+      appSettings.customFoqLogo = "";
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+      renderAllBrandLogos();
+      renderVipTicketsGrid();
+      showToast("تمت الاستعادة", "تمت استعادة الشعارات الرسمية الافتراضية.", "warning");
+    }
+
+    function confirmResetAllDataStep1() {
+      openConfirmModal(
+        "الخطوة 1 من 2: مسح جميع البيانات",
+        "هل قمت بتحميل ملف المستحقين للشهادات (Excel) قبل المسح؟ سيتم حذف جميع الأسماء وسجلات الحضور والانصراف.",
+        () => {
+          setTimeout(() => {
+            openConfirmModal(
+              "الخطوة 2 من 2: تأكيد التصفير النهائي",
+              "لا يمكن التراجع عن هذه الخطوة بعد التنفيذ. اضغط تأكيد نهائي لتصفير النظام بالكامل.",
+              () => {
+                attendees = [];
+                recentLogs = [];
+                rebuildLookupIndexes();
+                saveStateToStorage();
+                refreshAllUI();
+                showToast("تم تصفير النظام بالكامل", "النظام فارغ وجاهز لاستقبال فعالية جديدة.", "warning");
+              }
+            );
+          }, 180);
+        }
+      );
+    }
+
+    // =========================================================================
+    // 13. UI HELPERS: TOASTS, MODALS, AUDIO & ESCAPING
+    // =========================================================================
+    let toastTimeout = null;
+    function showToast(title, subtitle, type = "success") {
+      const banner = document.getElementById("toastBanner");
+      const icon = document.getElementById("toastIcon");
+      document.getElementById("toastTitle").innerText = title;
+      document.getElementById("toastSubtitle").innerText = subtitle || "";
+
+      const themes = {
+        success: { bg: "bg-emerald-600", icon: "fa-circle-check" },
+        warning: { bg: "bg-amber-600", icon: "fa-triangle-exclamation" },
+        error: { bg: "bg-red-600", icon: "fa-circle-xmark" }
+      };
+      const chosen = themes[type] || themes.success;
+
+      banner.className = `fixed top-4 left-1/2 z-50 w-[92%] max-w-lg rounded-2xl shadow-2xl p-4 text-white font-bold text-center border-2 border-white/25 toast-animate ${chosen.bg}`;
+      icon.className = `fa-solid ${chosen.icon} text-2xl shrink-0`;
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => banner.classList.add("hidden"), 3700);
+    }
+
+    let confirmCallback = null;
+    function openConfirmModal(title, text, onConfirm) {
+      document.getElementById("confirmModalTitle").innerText = title;
+      document.getElementById("confirmModalText").innerText = text;
+      confirmCallback = onConfirm;
+      const modal = document.getElementById("confirmModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+
+      document.getElementById("confirmModalYes").onclick = () => {
+        closeConfirmModal();
+        if (confirmCallback) confirmCallback();
+      };
+    }
+
+    function closeConfirmModal() {
+      const modal = document.getElementById("confirmModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById("soundIcon").className = soundEnabled
+        ? "fa-solid fa-volume-high text-sm"
+        : "fa-solid fa-volume-xmark text-sm text-red-500";
+      showToast(soundEnabled ? "تم تفعيل الصوت" : "تم كتم الصوت", "", "warning");
+    }
+
+    function playFeedbackSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (type === "checkin") {
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(784, now);
+          osc.frequency.setValueAtTime(1046.5, now + 0.08);
+          gain.gain.setValueAtTime(0.24, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else if (type === "celebrate") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.setValueAtTime(783.99, now + 0.09);
+          osc.frequency.setValueAtTime(1174.66, now + 0.18);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.36);
+          osc.start(now);
+          osc.stop(now + 0.36);
+        } else if (type === "warning") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(440, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else {
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(210, now);
+          osc.frequency.linearRampToValueAtTime(145, now + 0.28);
+          gain.gain.setValueAtTime(0.24, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+      } catch (e) {}
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>
